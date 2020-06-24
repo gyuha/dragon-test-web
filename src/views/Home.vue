@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 <template>
   <div>
-    <b-button @click="connectServer">Connect</b-button>
+    <h1>ROOM ID : {{ roomId }}</h1>
+    <GameState :value="gameState"></GameState>
     <b-button @click="joinRoom">Join Room</b-button>
+    <b-button @click="leave">Leave</b-button>
     <hr />
-    <json-view :data="jsonData" />
+    <json-view :data="stateData" />
   </div>
 </template>
 
@@ -14,46 +15,69 @@ import * as Colyseus from "colyseus.js";
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSONView } from "vue-json-component";
+import GameState from "@/components/GameState.vue";
+import _ from "lodash";
 
 @Component({
   props: {},
   components: {
-    "json-view": JSONView
-  }
+    GameState,
+    "json-view": JSONView,
+  },
 })
 export default class Home extends Vue {
   client!: Colyseus.Client;
+  room!: Colyseus.Room;
+  roomId = "";
 
-  jsonData: unknown = {
-    name: "data"
+  stateData = {
+    state: "none"
   };
+
+  get gameState() {
+    return this.stateData.state;
+  }
 
   constructor() {
     super();
   }
 
-  connectServer() {
-    this.client = new Colyseus.Client("ws://127.0.0.1:2567");
-    this.jsonData = this.client;
+  leave() {
+    console.log("leave room", this.room.id);
+    this.stateData = {
+      state: "none"
+    };
+    this.roomId = "";
+    this.room.leave();
   }
 
   joinRoom() {
+    this.client = new Colyseus.Client("ws://127.0.0.1:2567");
     this.client
       .joinOrCreate("room1")
       .then((room: Colyseus.Room) => {
-        console.log(room.sessionId, "joined", room.name);
+        console.log(room);
+        this.room = room;
+        this.roomId = room.id;
+        this.eventRegister();
       })
       .catch((e: unknown) => {
         console.log("JOIN ERROR", e);
-        this.jsonData = e;
       });
   }
 
-  // eventRegister(room: Colyseus.Room) {
-  //   room.onStateChange((state) => {
-
-  //   });
-  // }
+  eventRegister() {
+    this.room.onStateChange((state: any) => {
+      this.$buefy.snackbar.open({
+        duration: 500,
+        message: "Change state : " + JSON.stringify(state).slice(0, 50),
+        type: "iswarning",
+        position: "is-bottom"
+      });
+      this.stateData = _.clone(state);
+      this.$forceUpdate();
+    });
+  }
 }
 </script>
 
