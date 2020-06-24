@@ -2,8 +2,24 @@
   <div>
     <h1>ROOM ID : {{ roomId }}</h1>
     <GameState :value="gameState"></GameState>
+    <b-field grouped group-multiline>
+      <div class="control">
+        <b-taglist attached>
+          <b-tag type="is-dark">Room ID</b-tag>
+          <b-tag type="is-info">{{ roomId }}</b-tag>
+        </b-taglist>
+      </div>
+      <div class="control">
+        <b-taglist attached>
+          <b-tag type="is-dark">Session ID</b-tag>
+          <b-tag type="is-info">{{ sessionId }}</b-tag>
+        </b-taglist>
+      </div>
+    </b-field>
     <b-button @click="joinRoom">Join Room</b-button>
     <b-button @click="leave">Leave</b-button>
+    <hr />
+    <MatgoCards @select="onSelectCard" v-if="gameState == 'firstPick'" :cards="firstSelectCards"></MatgoCards>
     <hr />
     <json-view :data="stateData" />
   </div>
@@ -17,22 +33,33 @@ import * as Colyseus from "colyseus.js";
 import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
+import MatgoCards from "@/components/MatgoCards.vue";
 
 @Component({
   props: {},
   components: {
     GameState,
+    MatgoCards,
     "json-view": JSONView,
   },
 })
 export default class Home extends Vue {
   client!: Colyseus.Client;
-  room!: Colyseus.Room;
-  roomId = "";
+  room: Colyseus.Room | null = null;
 
   stateData = {
-    state: "none"
+    state: "none",
   };
+
+  firstSelectCards = [];
+
+  get roomId() {
+    return this.room ? this.room.id : "";
+  }
+
+  get sessionId() {
+    return this.room ? this.room.sessionId : "";
+  }
 
   get gameState() {
     return this.stateData.state;
@@ -43,12 +70,15 @@ export default class Home extends Vue {
   }
 
   leave() {
+    if (!this.room) {
+      return;
+    }
     console.log("leave room", this.room.id);
     this.stateData = {
-      state: "none"
+      state: "none",
     };
-    this.roomId = "";
     this.room.leave();
+    this.room = null;
   }
 
   joinRoom() {
@@ -58,7 +88,6 @@ export default class Home extends Vue {
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
-        this.roomId = room.id;
         this.eventRegister();
       })
       .catch((e: unknown) => {
@@ -67,16 +96,43 @@ export default class Home extends Vue {
   }
 
   eventRegister() {
+    if (!this.room) {
+      return;
+    }
     this.room.onStateChange((state: any) => {
+      console.log("Home -> eventRegister -> state", state.state);
       this.$buefy.snackbar.open({
         duration: 500,
         message: "Change state : " + JSON.stringify(state).slice(0, 50),
         type: "iswarning",
-        position: "is-bottom"
+        position: "is-bottom",
       });
       this.stateData = _.clone(state);
       this.$forceUpdate();
     });
+    //! firstSelect
+    this.room.onMessage("firstSelect", message => {
+      this.firstSelectCards = message.cards;
+      console.log("Home -> eventRegister -> message", message);
+    });
+    //! put
+    this.room.onMessage("put", message => {
+      console.log("Home -> eventRegister -> message", message)
+      this.firstSelectCards = message.cards;
+    });
+  }
+
+  onSelectCard(num: number) {
+    if (!this.room) {
+      return;
+    }
+    console.log(num);
+    if (this.gameState === "firstPick") {
+      this.room.send("firstPick", {
+        sessionId: this.sessionId,
+        value: [num]
+      })
+    }
   }
 }
 </script>
