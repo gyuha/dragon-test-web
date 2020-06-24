@@ -1,4 +1,5 @@
 # matgo-server-test
+맞고 패킷 테스트용 임시 프로젝트
 
 ## Project setup
 ```
