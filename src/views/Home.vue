@@ -15,11 +15,21 @@
           <b-tag type="is-info">{{ sessionId }}</b-tag>
         </b-taglist>
       </div>
+      <div class="control">
+        <b-taglist attached>
+          <b-tag type="is-dark">Message Type</b-tag>
+          <b-tag type="is-info">{{ messageType }}</b-tag>
+        </b-taglist>
+      </div>
     </b-field>
     <b-button @click="joinRoom">Join Room</b-button>
     <b-button @click="leave">Leave</b-button>
     <hr />
-    <MatgoCards @select="onSelectCard" v-if="gameState == 'firstPick'" :cards="firstSelectCards"></MatgoCards>
+    <MatgoCards
+      @select="onSelectCard"
+      v-if="gameState == 'firstPick'"
+      :cards="firstSelectCards"
+    ></MatgoCards>
     <hr />
     <json-view :data="stateData" />
   </div>
@@ -46,9 +56,10 @@ import MatgoCards from "@/components/MatgoCards.vue";
 export default class Home extends Vue {
   client!: Colyseus.Client;
   room: Colyseus.Room | null = null;
+  messageType = "";
 
   stateData = {
-    state: "none",
+    state: "none"
   };
 
   firstSelectCards = [];
@@ -75,12 +86,16 @@ export default class Home extends Vue {
     }
     console.log("leave room", this.room.id);
     this.stateData = {
-      state: "none",
+      state: "none"
     };
+    this.messageType = "";
     this.room.leave();
     this.room = null;
   }
 
+  /** 
+   * 방 접속 하기
+   */
   joinRoom() {
     this.client = new Colyseus.Client("ws://127.0.0.1:2567");
     this.client
@@ -105,19 +120,27 @@ export default class Home extends Vue {
         duration: 500,
         message: "Change state : " + JSON.stringify(state).slice(0, 50),
         type: "iswarning",
-        position: "is-bottom",
+        position: "is-bottom"
       });
       this.stateData = _.clone(state);
       this.$forceUpdate();
     });
-    //! firstSelect
-    this.room.onMessage("firstSelect", message => {
+    //! 게임 시작 여부
+    this.room.onMessage("startGame", (message) => {
+      this.messageType = "startGame";
+      console.log("Home -> eventRegister -> message", message);
+      this.$swal('test');
+    });
+    //! 선 고르기
+    this.room.onMessage("firstSelect", (message) => {
+      this.messageType = "firstSelect";
       this.firstSelectCards = message.cards;
       console.log("Home -> eventRegister -> message", message);
     });
-    //! put
-    this.room.onMessage("put", message => {
-      console.log("Home -> eventRegister -> message", message)
+    //! 게임 플레이
+    this.room.onMessage("play", (message) => {
+      this.messageType = "play";
+      console.log("Home -> eventRegister -> message", message);
       this.firstSelectCards = message.cards;
     });
   }
@@ -130,8 +153,8 @@ export default class Home extends Vue {
     if (this.gameState === "firstPick") {
       this.room.send("firstPick", {
         sessionId: this.sessionId,
-        value: [num]
-      })
+        value: [num],
+      });
     }
   }
 }
