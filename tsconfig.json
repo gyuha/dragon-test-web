@@ -37,5 +37,10 @@
   ],
   "exclude": [
     "node_modules"
+  ],
+  "types": [
+    "webpack-env",
+    "vue-sweetalert2",
+    "sweetalert2",
   ]
 }

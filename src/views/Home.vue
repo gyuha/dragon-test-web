@@ -59,7 +59,7 @@ export default class Home extends Vue {
   messageType = "";
 
   stateData = {
-    state: "none"
+    state: "none",
   };
 
   firstSelectCards = [];
@@ -80,20 +80,24 @@ export default class Home extends Vue {
     super();
   }
 
+  leaveAction() {
+    this.stateData = {
+      state: "none",
+    };
+    this.messageType = "";
+    this.room = null;
+  }
+
   leave() {
     if (!this.room) {
       return;
     }
     console.log("leave room", this.room.id);
-    this.stateData = {
-      state: "none"
-    };
-    this.messageType = "";
     this.room.leave();
-    this.room = null;
+    this.leaveAction();
   }
 
-  /** 
+  /**
    * 방 접속 하기
    */
   joinRoom() {
@@ -114,13 +118,14 @@ export default class Home extends Vue {
     if (!this.room) {
       return;
     }
+    const room = this.room;
     this.room.onStateChange((state: any) => {
       console.log("Home -> eventRegister -> state", state.state);
       this.$buefy.snackbar.open({
         duration: 500,
         message: "Change state : " + JSON.stringify(state).slice(0, 50),
         type: "iswarning",
-        position: "is-bottom"
+        position: "is-bottom",
       });
       this.stateData = _.clone(state);
       this.$forceUpdate();
@@ -129,7 +134,21 @@ export default class Home extends Vue {
     this.room.onMessage("startGame", (message) => {
       this.messageType = "startGame";
       console.log("Home -> eventRegister -> message", message);
-      this.$swal('test');
+      this.$swal({
+        title: "게임 시작",
+        text: "사용자가 입장 했습니다.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "시작",
+        cancelButtonText: "내보내기",
+      }).then((result: any) => {
+        console.log(result);
+        room.send("startGame", {
+          value: result.value ? true : false,
+        });
+      });
     });
     //! 선 고르기
     this.room.onMessage("firstSelect", (message) => {
@@ -142,6 +161,12 @@ export default class Home extends Vue {
       this.messageType = "play";
       console.log("Home -> eventRegister -> message", message);
       this.firstSelectCards = message.cards;
+    });
+
+    //! 게임에서 내보내 질때
+    this.room.onLeave((code) => {
+      console.log("Home -> eventRegister -> code", code);
+      this.leaveAction();
     });
   }
 
