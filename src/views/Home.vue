@@ -168,6 +168,11 @@ export default class Home extends Vue {
       console.log("Home -> eventRegister -> code", code);
       this.leaveAction();
     });
+
+    this.room.onMessage("put", (message) => {
+      this.messageType = "put";
+      this.firstSelectCards = message.cards;
+    })
   }
 
   onSelectCard(num: number) {
@@ -178,7 +183,7 @@ export default class Home extends Vue {
     if (this.gameState === "firstPick") {
       this.room.send("firstPick", {
         sessionId: this.sessionId,
-        value: [num],
+        cards: [num],
       });
     }
   }
