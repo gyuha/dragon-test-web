@@ -27,7 +27,7 @@
     </div>
     <hr />
     <div class="columns">
-      <div class="column">
+      <div class="column is-three-quarters">
         <b-field grouped group-multiline>
           <div class="control">
             <b-taglist attached>
