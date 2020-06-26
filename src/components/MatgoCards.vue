@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="card-group">
     <img class="matgoCard" v-for="(card, idx) in cards" :key="idx" :src="imgPath(card.image)" @click="selectCard(idx)"/>
   </div>
 </template>
@@ -27,8 +27,11 @@ export default class MatgoCards extends Vue {
 </script>
 
 <style lang="scss">
+.card-group {
+  height: 70px;
+}
 .matgoCard {
-  width: 50px;
-  margin: 4px;
+  width: 40px;
+  margin: 2px;
 }
 </style>

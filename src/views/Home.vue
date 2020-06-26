@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>ROOM ID : {{ roomId }}</h1>
     <GameState :value="gameState"></GameState>
     <b-field grouped group-multiline>
       <div class="control">
@@ -26,10 +25,22 @@
     <b-button @click="leave">Leave</b-button>
     <hr />
     <MatgoCards
-      @select="onSelectCard"
+      @select="onFirstSelectCard"
       v-if="gameState == 'firstPick'"
       :cards="firstSelectCards"
     ></MatgoCards>
+    <div v-if="gameState === 'play'">
+      <h1>상대 카드</h1>
+      <MatgoCards :cards="partnerCards"></MatgoCards>
+      <h1>상대가 먹은 카드</h1>
+      <MatgoCards :cards="partnerFloorCards"></MatgoCards>
+      <h1>바닥 카드</h1>
+      <MatgoCards :cards="floorCards"></MatgoCards>
+      <h1>먹은 카드</h1>
+      <MatgoCards :cards="myFloorCards"></MatgoCards>
+      <h1>내 카드</h1>
+      <MatgoCards @select="onHandCardSelect" :cards="myCards"></MatgoCards>
+    </div>
     <hr />
     <json-view :data="stateData" />
   </div>
@@ -44,14 +55,15 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
+import { Card, ResponseMessage } from '../matgo';
 
 @Component({
   props: {},
   components: {
     GameState,
     MatgoCards,
-    "json-view": JSONView,
-  },
+    "json-view": JSONView
+  }
 })
 export default class Home extends Vue {
   client!: Colyseus.Client;
@@ -59,10 +71,16 @@ export default class Home extends Vue {
   messageType = "";
 
   stateData = {
-    state: "none",
+    state: "none"
   };
 
   firstSelectCards = [];
+
+  myCards = [];
+  myFloorCards = [];
+  partnerCards = [];
+  partnerFloorCards = [];
+  floorCards = [];
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -82,7 +100,7 @@ export default class Home extends Vue {
 
   leaveAction() {
     this.stateData = {
-      state: "none",
+      state: "none"
     };
     this.messageType = "";
     this.room = null;
@@ -125,13 +143,16 @@ export default class Home extends Vue {
         duration: 500,
         message: "Change state : " + JSON.stringify(state).slice(0, 50),
         type: "iswarning",
-        position: "is-bottom",
+        position: "is-bottom"
       });
       this.stateData = _.clone(state);
+      if (this.gameState === "play") {
+        this.playCardsDisplay(state);
+      }
       this.$forceUpdate();
     });
     //! 게임 시작 여부
-    this.room.onMessage("startGame", (message) => {
+    this.room.onMessage("startGame", message => {
       this.messageType = "startGame";
       console.log("Home -> eventRegister -> message", message);
       this.$swal({
@@ -142,49 +163,67 @@ export default class Home extends Vue {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "시작",
-        cancelButtonText: "내보내기",
+        cancelButtonText: "내보내기"
       }).then((result: any) => {
         console.log(result);
         room.send("startGame", {
-          value: result.value ? true : false,
+          value: result.value ? true : false
         });
       });
     });
     //! 선 고르기
-    this.room.onMessage("firstSelect", (message) => {
+    this.room.onMessage("firstSelect", message => {
       this.messageType = "firstSelect";
       this.firstSelectCards = message.cards;
       console.log("Home -> eventRegister -> message", message);
     });
     //! 게임 플레이
-    this.room.onMessage("play", (message) => {
+    this.room.onMessage("play", message => {
       this.messageType = "play";
-      console.log("Home -> eventRegister -> message", message);
-      this.firstSelectCards = message.cards;
+      this.onPlayMessage(message);
     });
 
     //! 게임에서 내보내 질때
-    this.room.onLeave((code) => {
+    this.room.onLeave(code => {
       console.log("Home -> eventRegister -> code", code);
       this.leaveAction();
     });
 
-    this.room.onMessage("put", (message) => {
+    this.room.onMessage("put", message => {
       this.messageType = "put";
       this.firstSelectCards = message.cards;
-    })
+    });
   }
 
-  onSelectCard(num: number) {
+  playCardsDisplay(state: any) {
+    _.forEach(state.players, (player: any, id: string) => {
+      if (this.sessionId == player.sessionId) {
+        this.myFloorCards = player.floorCards;
+      } else {
+        this.partnerFloorCards = player.floorCards;
+      }
+    });
+    this.floorCards = state.floorCards;
+  }
+
+  onFirstSelectCard(num: number) {
     if (!this.room) {
       return;
     }
     console.log(num);
-    if (this.gameState === "firstPick") {
-      this.room.send("firstPick", {
-        sessionId: this.sessionId,
-        cards: [num],
-      });
+    this.room.send("firstPick", {
+      sessionId: this.sessionId,
+      cards: [num]
+    });
+  }
+
+  onHandCardSelect(num: number) {
+    console.log("Home -> onHandCardSelect -> num", num);
+  }
+
+  onPlayMessage(message: ResponseMessage) {
+    if (message.type === 'handCards') {
+      this.myCards = message.cards as [];
     }
   }
 }
