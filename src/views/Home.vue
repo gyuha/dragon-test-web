@@ -1,45 +1,68 @@
 <template>
   <div>
     <GameState :value="gameState"></GameState>
-    <b-field grouped group-multiline>
-      <div class="control">
-        <b-taglist attached>
-          <b-tag type="is-dark">Room ID</b-tag>
-          <b-tag type="is-info">{{ roomId }}</b-tag>
-        </b-taglist>
-      </div>
-      <div class="control">
-        <b-taglist attached>
-          <b-tag type="is-dark">Session ID</b-tag>
-          <b-tag type="is-info">{{ sessionId }}</b-tag>
-        </b-taglist>
-      </div>
-      <div class="control">
-        <b-taglist attached>
-          <b-tag type="is-dark">Message Type</b-tag>
-          <b-tag type="is-info">{{ messageType }}</b-tag>
-        </b-taglist>
-      </div>
-    </b-field>
-    <b-button @click="joinRoom">Join Room</b-button>
-    <b-button @click="leave">Leave</b-button>
     <hr />
     <MatgoCards
-      @select="onFirstSelectCard"
+      @select="firstCardClick"
       v-if="gameState == 'firstPick'"
       :cards="firstSelectCards"
     ></MatgoCards>
     <div v-if="gameState === 'play'">
-      <h1>상대 카드</h1>
+      <h1>상대 카드({{ partnerCards.length }})</h1>
       <MatgoCards :cards="partnerCards"></MatgoCards>
-      <h1>상대가 먹은 카드</h1>
+      <h1>상대가 먹은 카드 ({{ partnerFloorCards.length }})</h1>
       <MatgoCards :cards="partnerFloorCards"></MatgoCards>
-      <h1>바닥 카드</h1>
+      <h1>바닥 카드({{ floorCards.length }})</h1>
       <MatgoCards :cards="floorCards"></MatgoCards>
-      <h1>먹은 카드</h1>
+      <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
+      <MatgoCards
+        v-if="backCardCount > 0"
+        :cards="[backCard]"
+        @select="backCardClick"
+      ></MatgoCards>
+      <h1>먹은 카드 ({{ myFloorCards.length }})</h1>
       <MatgoCards :cards="myFloorCards"></MatgoCards>
-      <h1>내 카드</h1>
-      <MatgoCards @select="onHandCardSelect" :cards="myCards"></MatgoCards>
+      <h1>내 카드 ({{ myCards.length }})</h1>
+      <MatgoCards @select="handCardClick" :cards="myCards"></MatgoCards>
+    </div>
+    <hr />
+    <div class="columns">
+      <div class="column">
+        <b-field grouped group-multiline>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag type="is-dark">Room ID</b-tag>
+              <b-tag type="is-info">{{ roomId }}</b-tag>
+            </b-taglist>
+          </div>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag type="is-dark">Session ID</b-tag>
+              <b-tag type="is-info">{{ sessionId }}</b-tag>
+            </b-taglist>
+          </div>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag type="is-dark">Message Type</b-tag>
+              <b-tag type="is-info">{{ messageType }}</b-tag>
+            </b-taglist>
+          </div>
+        </b-field>
+      </div>
+      <div class="column">
+        <b-button
+          type="is-info"
+          @click="joinRoom"
+          :disabled="gameState != 'none'"
+          >Join Room</b-button
+        >
+        <b-button
+          type="is-danger"
+          @click="leave"
+          :disabled="gameState == 'none'"
+          >Leave</b-button
+        >
+      </div>
     </div>
     <hr />
     <json-view :data="stateData" />
@@ -55,7 +78,7 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
-import { Card, ResponseMessage } from '../matgo';
+import { MatgoCard, ResponseMessage } from "../matgo";
 
 @Component({
   props: {},
@@ -78,9 +101,20 @@ export default class Home extends Vue {
 
   myCards = [];
   myFloorCards = [];
-  partnerCards = [];
+  partnerCardCount = 0;
   partnerFloorCards = [];
   floorCards = [];
+  backCardCount = 0;
+  turn = "";
+
+  backCard: MatgoCard = {
+    id: -1,
+    num: -1,
+    image: 0,
+    tag: -1,
+    type: -1,
+    event: 0
+  };
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -92,6 +126,14 @@ export default class Home extends Vue {
 
   get gameState() {
     return this.stateData.state;
+  }
+
+  get partnerCards(): MatgoCard[] {
+    const cards = [];
+    for (let i = 0; i < this.partnerCardCount; i++) {
+      cards.push(this.backCard);
+    }
+    return cards;
   }
 
   constructor() {
@@ -139,18 +181,14 @@ export default class Home extends Vue {
     const room = this.room;
     this.room.onStateChange((state: any) => {
       console.log("Home -> eventRegister -> state", state.state);
-      this.$buefy.snackbar.open({
-        duration: 500,
-        message: "Change state : " + JSON.stringify(state).slice(0, 50),
-        type: "iswarning",
-        position: "is-bottom"
-      });
+      this.toast("Change state : " + JSON.stringify(state).slice(0, 50));
       this.stateData = _.clone(state);
       if (this.gameState === "play") {
         this.playCardsDisplay(state);
       }
       this.$forceUpdate();
     });
+
     //! 게임 시작 여부
     this.room.onMessage("startGame", message => {
       this.messageType = "startGame";
@@ -201,30 +239,50 @@ export default class Home extends Vue {
         this.myFloorCards = player.floorCards;
       } else {
         this.partnerFloorCards = player.floorCards;
+        this.partnerCardCount = player.handCardCount;
       }
     });
+    this.turn = state.turn;
+    this.backCardCount = state.backCardCount;
     this.floorCards = state.floorCards;
   }
 
-  onFirstSelectCard(num: number) {
+  firstCardClick(num: number) {
     if (!this.room) {
       return;
     }
-    console.log(num);
+    console.log("firstPick: " + num);
     this.room.send("firstPick", {
       sessionId: this.sessionId,
       cards: [num]
     });
   }
 
-  onHandCardSelect(num: number) {
+  handCardClick(num: number) {
+    if (this.turn !== this.sessionId) {
+      this.toast("칠 차례가 아닙니다.", "is-danger");
+      return;
+    }
     console.log("Home -> onHandCardSelect -> num", num);
   }
 
+  backCardClick(num: number) {
+    console.log("Home -> backCardClick -> num", num);
+  }
+
   onPlayMessage(message: ResponseMessage) {
-    if (message.type === 'handCards') {
+    if (message.type === "handCards") {
       this.myCards = message.cards as [];
     }
+  }
+
+  toast(message: string, type = "is-warning") {
+    this.$buefy.snackbar.open({
+      duration: 500,
+      message: message,
+      type,
+      position: "is-bottom"
+    });
   }
 }
 </script>

@@ -32,7 +32,7 @@ export enum CardEvent {
   TAKE_PEE, //! 상대편의 피를 가져 온다.
 }
 
-export interface Card {
+export interface MatgoCard {
   id: number;
   num: number;
   type: CardType;
@@ -53,8 +53,8 @@ export interface ResponseMessage {
   sessionId?: string; //! 클라이언트 아이디, 비어 있으면 공통
   type?: 'take' | 'handCards' | 'backTake' | 'ppuk' | 'gostop' | 'kookjin' | 'error'; //! 결과 종류
   value?: any; //! 값일 경우
-  putCards?: Card[]; //! 낸 카드
-  cards?: Card[]; //! 가져간 카드 카드
+  putCards?: MatgoCard[]; //! 낸 카드
+  cards?: MatgoCard[]; //! 가져간 카드 카드
   message?: string;
   nextPlayerId?: string; //! 다음 턴 사용자 아이디
 }
