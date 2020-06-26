@@ -227,14 +227,14 @@ export default class Home extends Vue {
       this.leaveAction();
     });
 
-    this.room.onMessage("put", message => {
-      this.messageType = "put";
-      this.firstSelectCards = message.cards;
+    this.room.onMessage("take", message => {
+      this.messageType = "take";
+      console.log(message);
     });
   }
 
   playCardsDisplay(state: any) {
-    _.forEach(state.players, (player: any, id: string) => {
+    _.forEach(state.players, (player: any) => {
       if (this.sessionId == player.sessionId) {
         this.myFloorCards = player.floorCards;
       } else {
@@ -259,11 +259,18 @@ export default class Home extends Vue {
   }
 
   handCardClick(num: number) {
+    if (!this.room) {
+      return;
+    }
     if (this.turn !== this.sessionId) {
       this.toast("칠 차례가 아닙니다.", "is-danger");
       return;
     }
     console.log("Home -> onHandCardSelect -> num", num);
+    this.room.send("put", {
+      sessionId: this.sessionId,
+      cards: [num]
+    });
   }
 
   backCardClick(num: number) {
