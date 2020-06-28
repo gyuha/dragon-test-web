@@ -12,6 +12,8 @@ Vue.config.productionTip = false;
 Vue.use(Buefy);
 Vue.use(VueSweetalert2);
 
+console.log(process.env);
+
 new Vue({
   router,
   store,

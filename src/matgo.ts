@@ -44,8 +44,7 @@ export interface MatgoCard {
 export interface RequestMessage {
   sessionId?: string; //! 클라이언트 아이디, 비어 있으면 공통
   type?: 'put' | 'gostop' | 'gookjin' | 'shake' | 'backTake';
-  value?: any; //! 임시 변수
-  cards?: number[]; //! 선택한 카드의 순번
+  value?: any; //! 요청 값
 }
 
 

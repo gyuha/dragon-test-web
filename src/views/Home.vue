@@ -161,7 +161,9 @@ export default class Home extends Vue {
    * 방 접속 하기
    */
   joinRoom() {
-    this.client = new Colyseus.Client("ws://127.0.0.1:2567");
+    const host = `ws://${process.env.VUE_APP_SERVER_HOST}`;
+    console.log(host);
+    this.client = new Colyseus.Client(host);
     this.client
       .joinOrCreate("room1")
       .then((room: Colyseus.Room) => {
@@ -254,7 +256,7 @@ export default class Home extends Vue {
     console.log("firstPick: " + num);
     this.room.send("firstPick", {
       sessionId: this.sessionId,
-      cards: [num]
+      value: num
     });
   }
 
@@ -267,9 +269,10 @@ export default class Home extends Vue {
       return;
     }
     console.log("Home -> onHandCardSelect -> num", num);
-    this.room.send("put", {
+    this.room.send("play", {
       sessionId: this.sessionId,
-      cards: [num]
+      type: "put",
+      value: num
     });
   }
 
@@ -278,6 +281,7 @@ export default class Home extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
+    console.log("Home -> onPlayMessage -> message", message);
     if (message.type === "handCards") {
       this.myCards = message.cards as [];
     }

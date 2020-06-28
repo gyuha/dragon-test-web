@@ -6,6 +6,8 @@
     "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "predeploy:test": "vue-cli-service build --mode test",
+    "deploy:test": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/matgo/client/",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
