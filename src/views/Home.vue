@@ -78,35 +78,9 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
-import { MatgoCard, ResponseMessage } from "./Packet";
-import { Player } from "./Player";
-
-const emptyPlayer: Player = {
-  sessoinId: "",
-  handCardCount: 0,
-  status: {
-    canFinsh: false,
-    score: 0,
-    maxScore: 0,
-    goCount: 0,
-    shake: 0,
-    boomCount: 0,
-    cheongDan: 0,
-    choDan: 0,
-    hongDan: 0,
-    godori: 0,
-    kwangBak: false,
-    peeBak: false
-  },
-  floorCards: [],
-  info: {
-    name: "",
-    money: 0
-  },
-  trun: false,
-  connected: false,
-  exitReserve: false
-};
+import { Player } from "@/matgo/Player";
+import { MatgoCard } from "../matgoSchema/MatgoCard";
+import { ResponseMessage } from '../matgoSchema/ResponseMessage';
 
 @Component({
   props: {},
@@ -127,8 +101,8 @@ export default class Home extends Vue {
 
   firstSelectCards = [];
 
-  my: Player = _.clone(emptyPlayer);
-  opposite: Player = _.clone(emptyPlayer);
+  my: Player = new Player();
+  opposite: Player = new Player();
 
   myHandCards = [];
 
@@ -136,14 +110,7 @@ export default class Home extends Vue {
   backCardCount = 0;
   turn = "";
 
-  backCard: MatgoCard = {
-    id: -1,
-    num: -1,
-    image: 0,
-    tag: -1,
-    type: -1,
-    event: 0
-  };
+  backCard: MatgoCard = new MatgoCard();
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -282,7 +249,7 @@ export default class Home extends Vue {
     console.log("firstPick: " + num);
     this.room.send("firstPick", {
       sessionId: this.sessionId,
-      value: num
+      value: [num]
     });
   }
 
@@ -298,7 +265,7 @@ export default class Home extends Vue {
     this.room.send("play", {
       sessionId: this.sessionId,
       type: "put",
-      value: num
+      value: [num]
     });
   }
 
