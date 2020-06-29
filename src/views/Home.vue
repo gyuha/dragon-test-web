@@ -8,10 +8,10 @@
       :cards="firstSelectCards"
     ></MatgoCards>
     <div v-if="gameState === 'play'">
-      <h1>상대 카드({{ partnerCards.length }})</h1>
-      <MatgoCards :cards="partnerCards"></MatgoCards>
-      <h1>상대가 먹은 카드 ({{ partnerFloorCards.length }})</h1>
-      <MatgoCards :cards="partnerFloorCards"></MatgoCards>
+      <h1>상대 카드({{ opposite.handCardCount }})</h1>
+      <MatgoCards :cards="oppositeHandCards"></MatgoCards>
+      <h1>상대가 먹은 카드 ({{ opposite.floorCards.length }})</h1>
+      <MatgoCards :cards="opposite.floorCards"></MatgoCards>
       <h1>바닥 카드({{ floorCards.length }})</h1>
       <MatgoCards :cards="floorCards"></MatgoCards>
       <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
@@ -20,10 +20,10 @@
         :cards="[backCard]"
         @select="backCardClick"
       ></MatgoCards>
-      <h1>먹은 카드 ({{ myFloorCards.length }})</h1>
-      <MatgoCards :cards="myFloorCards"></MatgoCards>
-      <h1>내 카드 ({{ myCards.length }})</h1>
-      <MatgoCards @select="handCardClick" :cards="myCards"></MatgoCards>
+      <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
+      <MatgoCards :cards="my.floorCards"></MatgoCards>
+      <h1>내 카드 ({{ myHandCards.length }})</h1>
+      <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
     </div>
     <hr />
     <div class="columns">
@@ -78,7 +78,35 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
-import { MatgoCard, ResponseMessage } from "../matgo";
+import { MatgoCard, ResponseMessage } from "./Packet";
+import { Player } from "./Player";
+
+const emptyPlayer: Player = {
+  sessoinId: "",
+  handCardCount: 0,
+  status: {
+    canFinsh: false,
+    score: 0,
+    maxScore: 0,
+    goCount: 0,
+    shake: 0,
+    boomCount: 0,
+    cheongDan: 0,
+    choDan: 0,
+    hongDan: 0,
+    godori: 0,
+    kwangBak: false,
+    peeBak: false
+  },
+  floorCards: [],
+  info: {
+    name: "",
+    money: 0
+  },
+  trun: false,
+  connected: false,
+  exitReserve: false
+};
 
 @Component({
   props: {},
@@ -99,10 +127,11 @@ export default class Home extends Vue {
 
   firstSelectCards = [];
 
-  myCards = [];
-  myFloorCards = [];
-  partnerCardCount = 0;
-  partnerFloorCards = [];
+  my: Player = _.clone(emptyPlayer);
+  opposite: Player = _.clone(emptyPlayer);
+
+  myHandCards = [];
+
   floorCards = [];
   backCardCount = 0;
   turn = "";
@@ -128,9 +157,9 @@ export default class Home extends Vue {
     return this.stateData.state;
   }
 
-  get partnerCards(): MatgoCard[] {
+  get oppositeHandCards(): MatgoCard[] {
     const cards = [];
-    for (let i = 0; i < this.partnerCardCount; i++) {
+    for (let i = 0; i < this.opposite.handCardCount; i++) {
       cards.push(this.backCard);
     }
     return cards;
@@ -182,8 +211,6 @@ export default class Home extends Vue {
     }
     const room = this.room;
     this.room.onStateChange((state: any) => {
-      console.log("Home -> eventRegister -> state", state.state);
-      this.toast("Change state : " + JSON.stringify(state).slice(0, 50));
       this.stateData = _.clone(state);
       if (this.gameState === "play") {
         this.playCardsDisplay(state);
@@ -238,10 +265,9 @@ export default class Home extends Vue {
   playCardsDisplay(state: any) {
     _.forEach(state.players, (player: any) => {
       if (this.sessionId == player.sessionId) {
-        this.myFloorCards = player.floorCards;
+        this.my = player;
       } else {
-        this.partnerFloorCards = player.floorCards;
-        this.partnerCardCount = player.handCardCount;
+        this.opposite = player;
       }
     });
     this.turn = state.turn;
@@ -281,9 +307,8 @@ export default class Home extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
-    console.log("Home -> onPlayMessage -> message", message);
     if (message.type === "handCards") {
-      this.myCards = message.cards as [];
+      this.myHandCards = message.cards as [];
     }
   }
 
