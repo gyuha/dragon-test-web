@@ -41,16 +41,35 @@ export interface MatgoCard {
   event: CardEvent;
 }
 
+export type RequestType =
+  | 'put' //! 카드 내기
+  | 'backTake' //! 바닥 카드 뒤지기
+  | 'gostop' //! 고 or 스톱
+  | 'gookjin' //! 국진
+  | 'shake' //! 흔들기
+  | 'handCards'; //! 손에 든 카드 확인
+
+
+export type ResponseType =
+  | 'take' //! 카드 받아가기
+  | 'backTake' //! 카드
+  | 'selectCard' //! 카드 선택하기
+  | 'handCards' //! 손에 있을 카드 조회
+  | 'ppuk' //! 뻑
+  | 'gostop' //! 스톱
+  | 'kookjin' //! 국진
+  | 'error'; //! 결과 종류
+
 export interface RequestMessage {
   sessionId?: string; //! 클라이언트 아이디, 비어 있으면 공통
-  type?: 'put' | 'gostop' | 'gookjin' | 'shake' | 'backTake';
+  type?: RequestType;
   value?: any; //! 요청 값
 }
 
 
 export interface ResponseMessage {
   sessionId?: string; //! 클라이언트 아이디, 비어 있으면 공통
-  type?: 'take' | 'handCards' | 'backTake' | 'ppuk' | 'gostop' | 'kookjin' | 'error'; //! 결과 종류
+  type?: ResponseType;
   value?: any; //! 값일 경우
   putCards?: MatgoCard[]; //! 낸 카드
   cards?: MatgoCard[]; //! 가져간 카드 카드
