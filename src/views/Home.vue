@@ -175,6 +175,7 @@ export default class Home extends Vue {
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
+        console.log("Home -> joinRoom -> this.room", this.room)
         this.eventRegister();
       })
       .catch((e: unknown) => {
