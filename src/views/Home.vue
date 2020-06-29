@@ -78,9 +78,15 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
-import { Player } from "@/matgo/Player";
 import { MatgoCard } from "../matgoSchema/MatgoCard";
-import { ResponseMessage } from '../matgoSchema/ResponseMessage';
+import { Player } from "@/matgoSchema/Player";
+import {
+  MessageType,
+  RequestMessageType,
+  ResponseMessageType
+} from "@/matgoSchema/MatgoType";
+import { ResponseMessage } from "../matgoSchema/ResponseMessage";
+import { RequestMessage } from "@/matgoSchema/RequestMessage";
 
 @Component({
   props: {},
@@ -99,7 +105,7 @@ export default class Home extends Vue {
     state: "none"
   };
 
-  firstSelectCards = [];
+  firstSelectCards: MatgoCard[] = [];
 
   my: Player = new Player();
   opposite: Player = new Player();
@@ -134,6 +140,10 @@ export default class Home extends Vue {
 
   constructor() {
     super();
+    this.backCard.id = -1;
+    this.backCard.num = -1;
+    this.backCard.tag = -1;
+    this.backCard.image = 0;
   }
 
   leaveAction() {
@@ -176,7 +186,6 @@ export default class Home extends Vue {
     if (!this.room) {
       return;
     }
-    const room = this.room;
     this.room.onStateChange((state: any) => {
       this.stateData = _.clone(state);
       if (this.gameState === "play") {
@@ -186,9 +195,8 @@ export default class Home extends Vue {
     });
 
     //! 게임 시작 여부
-    this.room.onMessage("startGame", message => {
+    this.room.onMessage(MessageType.startGame, (message: ResponseMessage) => {
       this.messageType = "startGame";
-      console.log("Home -> eventRegister -> message", message);
       this.$swal({
         title: "게임 시작",
         text: "사용자가 입장 했습니다.",
@@ -200,19 +208,21 @@ export default class Home extends Vue {
         cancelButtonText: "내보내기"
       }).then((result: any) => {
         console.log(result);
-        room.send("startGame", {
-          value: result.value ? true : false
+        this.sendMessage(MessageType.startGame, {
+          sessionId: this.sessionId,
+          type: RequestMessageType.put,
+          value: [result.value ? 1 : 0]
         });
       });
     });
     //! 선 고르기
-    this.room.onMessage("firstSelect", message => {
+    this.room.onMessage(MessageType.firstPick, (message: ResponseMessage) => {
       this.messageType = "firstSelect";
-      this.firstSelectCards = message.cards;
+      this.firstSelectCards = message.cards as MatgoCard[];
       console.log("Home -> eventRegister -> message", message);
     });
     //! 게임 플레이
-    this.room.onMessage("play", message => {
+    this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
       this.messageType = "play";
       this.onPlayMessage(message);
     });
@@ -221,11 +231,6 @@ export default class Home extends Vue {
     this.room.onLeave(code => {
       console.log("Home -> eventRegister -> code", code);
       this.leaveAction();
-    });
-
-    this.room.onMessage("take", message => {
-      this.messageType = "take";
-      console.log(message);
     });
   }
 
@@ -247,7 +252,7 @@ export default class Home extends Vue {
       return;
     }
     console.log("firstPick: " + num);
-    this.room.send("firstPick", {
+    this.sendMessage(MessageType.firstPick, {
       sessionId: this.sessionId,
       value: [num]
     });
@@ -262,9 +267,9 @@ export default class Home extends Vue {
       return;
     }
     console.log("Home -> onHandCardSelect -> num", num);
-    this.room.send("play", {
+    this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
-      type: "put",
+      type: RequestMessageType.put,
       value: [num]
     });
   }
@@ -274,7 +279,8 @@ export default class Home extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
-    if (message.type === "handCards") {
+    // 손에 든 카드 목록
+    if (message.type === ResponseMessageType.handCards) {
       this.myHandCards = message.cards as [];
     }
   }
@@ -286,6 +292,12 @@ export default class Home extends Vue {
       type,
       position: "is-bottom"
     });
+  }
+
+  public sendMessage(type: MessageType, message: RequestMessage) {
+    if (this.room) {
+      this.room.send(type, message);
+    }
   }
 }
 </script>

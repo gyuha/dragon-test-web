@@ -9,13 +9,13 @@ import { MatgoCard } from './MatgoCard';
 import { ResponseMessageType } from './MatgoType';
 
 export interface ResponseMessage {
-    sessionId: string;
-    type: ResponseMessageType;
-    value: number[];
-    cards: MatgoCard[];
-    putCards: MatgoCard[];
-    takCards: MatgoCard[];
-    playerFloorCards: MatgoCard[];
-    message: string;
-    nextPlayerId: string;
+    sessionId?: string;
+    type?: ResponseMessageType;
+    value?: number[];
+    cards?: MatgoCard[];
+    putCards?: MatgoCard[];
+    takCards?: MatgoCard[];
+    playerFloorCards?: MatgoCard[];
+    message?: string;
+    nextPlayerId?: string;
 }
