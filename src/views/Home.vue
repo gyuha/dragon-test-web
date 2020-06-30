@@ -175,7 +175,7 @@ export default class Home extends Vue {
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
-        console.log("Home -> joinRoom -> this.room", this.room)
+        console.log("Home -> joinRoom -> this.room", this.room.state);
         this.eventRegister();
       })
       .catch((e: unknown) => {
@@ -196,7 +196,7 @@ export default class Home extends Vue {
     });
 
     //! 게임 시작 여부
-    this.room.onMessage(MessageType.startGame, (message: ResponseMessage) => {
+    this.room.onMessage(MessageType.startGame, () => {
       this.messageType = "startGame";
       this.$swal({
         title: "게임 시작",

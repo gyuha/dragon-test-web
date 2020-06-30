@@ -5,9 +5,9 @@
 // GENERATED USING @colyseus/schema 0.5.39
 // 
 
-import { ArraySchema, MapSchema, Schema, type } from "@colyseus/schema";
-import { MatgoCard } from "./MatgoCard";
-import { Player } from "./Player";
+import { Schema, type, ArraySchema, MapSchema, DataChange } from "@colyseus/schema";
+import { Player } from "./Player"
+import { MatgoCard } from "./MatgoCard"
 
 export class MatgoState extends Schema {
     @type("string") public state: string;
