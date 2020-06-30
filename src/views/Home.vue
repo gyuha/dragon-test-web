@@ -117,6 +117,7 @@ export default class Home extends Vue {
   turn = "";
 
   backCard: MatgoCard = new MatgoCard();
+  oppositeHandCards: MatgoCard[] = [];
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -130,12 +131,11 @@ export default class Home extends Vue {
     return this.stateData.state;
   }
 
-  get oppositeHandCards(): MatgoCard[] {
-    const cards = [];
+  oppositeHandCardUpdate() {
+    this.oppositeHandCards = [];
     for (let i = 0; i < this.opposite.handCardCount; i++) {
-      cards.push(this.backCard);
+      this.oppositeHandCards.push(this.backCard);
     }
-    return cards;
   }
 
   constructor() {
@@ -246,6 +246,7 @@ export default class Home extends Vue {
     this.turn = state.turn;
     this.backCardCount = state.backCardCount;
     this.floorCards = state.floorCards;
+    this.oppositeHandCardUpdate();
   }
 
   firstCardClick(num: number) {
