@@ -82,8 +82,8 @@ import { MatgoCard } from "../matgoSchema/MatgoCard";
 import { Player } from "@/matgoSchema/Player";
 import {
   MessageType,
-  RequestMessageType,
-  ResponseMessageType
+  RequestMessageCommand,
+  ResponseMessageCommand
 } from "@/matgoSchema/MatgoType";
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
@@ -143,7 +143,7 @@ export default class Home extends Vue {
     this.backCard.id = -1;
     this.backCard.num = -1;
     this.backCard.tag = -1;
-    this.backCard.image = 0;
+    this.backCard.image = "back";
   }
 
   leaveAction() {
@@ -211,7 +211,7 @@ export default class Home extends Vue {
         console.log(result);
         this.sendMessage(MessageType.startGame, {
           sessionId: this.sessionId,
-          type: RequestMessageType.put,
+          command: RequestMessageCommand.put,
           value: [result.value ? 1 : 0]
         });
       });
@@ -254,6 +254,7 @@ export default class Home extends Vue {
     }
     console.log("firstPick: " + num);
     this.sendMessage(MessageType.firstPick, {
+      command: RequestMessageCommand.none,
       sessionId: this.sessionId,
       value: [num]
     });
@@ -270,7 +271,7 @@ export default class Home extends Vue {
     console.log("Home -> onHandCardSelect -> num", num);
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
-      type: RequestMessageType.put,
+      command: RequestMessageCommand.put,
       value: [num]
     });
   }
@@ -281,7 +282,7 @@ export default class Home extends Vue {
 
   onPlayMessage(message: ResponseMessage) {
     // 손에 든 카드 목록
-    if (message.type === ResponseMessageType.handCards) {
+    if (message.command === ResponseMessageCommand.handCards) {
       this.myHandCards = message.cards as [];
     }
   }

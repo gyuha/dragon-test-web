@@ -13,6 +13,6 @@ export class MatgoCard extends Schema {
     @type("number") public num: number;
     @type("number") public type: number;
     @type("number") public tag: number;
-    @type("number") public image: number;
-    @type("number") public action: number;
+    @type("string") public image: string;
+    @type("number") public group: number;
 }

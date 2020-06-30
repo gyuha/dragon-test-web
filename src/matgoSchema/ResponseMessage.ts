@@ -6,16 +6,16 @@
 // 
 
 import { MatgoCard } from './MatgoCard';
-import { ResponseMessageType } from './MatgoType';
+import { ResponseMessageCommand } from './MatgoType';
 
 export interface ResponseMessage {
-    sessionId?: string;
-    type?: ResponseMessageType;
-    value?: number[];
-    cards?: MatgoCard[];
-    putCards?: MatgoCard[];
-    takCards?: MatgoCard[];
-    playerFloorCards?: MatgoCard[];
-    message?: string;
-    nextPlayerId?: string;
+    sessionId: string;
+    command: ResponseMessageCommand;
+    value: number[];
+    cards: MatgoCard[];
+    putCards: MatgoCard[];
+    takCards: MatgoCard[];
+    playerFloorCards: MatgoCard[];
+    message: string;
+    nextPlayerId: string;
 }
