@@ -64,6 +64,22 @@
         >
       </div>
     </div>
+    <b-modal
+      :active.sync="isSelectModalActive"
+      has-modal-card
+      :can-cancel="false"
+    >
+      <form action="">
+        <div class="modal-card" style="width: auto">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Select</p>
+          </header>
+          <section class="modal-card-body">
+            <MatgoCards :cards="selectCards" @select="onSelectCard" />
+          </section>
+        </div>
+      </form>
+    </b-modal>
     <hr />
     <json-view :data="stateData" />
   </div>
@@ -113,11 +129,14 @@ export default class Home extends Vue {
   myHandCards = [];
 
   floorCards = [];
+  selectCards = [];
   backCardCount = 0;
   turn = "";
 
   backCard: MatgoCard = new MatgoCard();
   oppositeHandCards: MatgoCard[] = [];
+
+  isSelectModalActive = false;
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -289,7 +308,21 @@ export default class Home extends Vue {
       case ResponseMessageCommand.take:
         console.warn(message.playCards);
         break;
+      case ResponseMessageCommand.select:
+        this.selectCards = message.cards as [];
+        this.isSelectModalActive = true;
+        break;
     }
+  }
+
+  // 카드 선택하기
+  onSelectCard(num: number) {
+    this.isSelectModalActive = false;
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: RequestMessageCommand.select,
+      value: [num]
+    });
   }
 
   toast(message: string, type = "is-warning") {
