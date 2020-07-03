@@ -7,13 +7,14 @@
 
 import { MatgoCard } from './MatgoCard';
 import { ResponseMessageCommand } from './MatgoType';
+import { PlayCard } from './PlayCard';
 
 export interface ResponseMessage {
   sessionId?: string; //! 클라이언트 아이디, 비어 있으면 공통
   command?: ResponseMessageCommand;
   value?: number[]; //! 값일 경우
   cards?: MatgoCard[]; //! 카드 들
-  playCards?: MatgoCard[]; //! 게임 진행한 카드
+  playCards?: PlayCard[]; //! 게임 진행한 카드
   putCards?: MatgoCard[]; //! 낸 카드
   playerFloorCards?: MatgoCard[]; //! 플레이어의 바닥 카드
   message?: string; //! 메시지

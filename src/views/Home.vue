@@ -282,9 +282,13 @@ export default class Home extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
-    // 손에 든 카드 목록
-    if (message.command === ResponseMessageCommand.handCards) {
-      this.myHandCards = message.cards as [];
+    switch (message.command) {
+      case ResponseMessageCommand.handCards:
+        this.myHandCards = message.cards as [];
+        break;
+      case ResponseMessageCommand.take:
+        console.warn(message.playCards);
+        break;
     }
   }
 
