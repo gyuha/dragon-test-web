@@ -1,31 +1,39 @@
 <template>
   <div>
     <GameState :value="gameState"></GameState>
-    <hr />
     <MatgoCards
       @select="firstCardClick"
       v-if="gameState == 'firstPick'"
       :cards="firstSelectCards"
     ></MatgoCards>
     <div v-if="gameState === 'play'">
-      <h1>상대 카드({{ opposite.handCardCount }})</h1>
-      <MatgoCards :cards="oppositeHandCards"></MatgoCards>
-      <h1>상대가 먹은 카드 ({{ opposite.floorCards.length }})</h1>
-      <MatgoCards :cards="opposite.floorCards"></MatgoCards>
+      <div class="player-card-group">
+        <h1>상대 카드({{ opposite.handCardCount }})</h1>
+        <MatgoCards :cards="oppositeHandCards"></MatgoCards>
+
+        <h1>상대가 먹은 카드 ({{ opposite.floorCards.length }})</h1>
+        <MatgoCards :cards="opposite.floorCards"></MatgoCards>
+      </div>
+
       <h1>바닥 카드({{ floorCards.length }})</h1>
       <MatgoCards :cards="floorCards"></MatgoCards>
+
       <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
       <MatgoCards
         v-if="backCardCount > 0"
         :cards="[backCard]"
         @select="backCardClick"
       ></MatgoCards>
-      <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
-      <MatgoCards :cards="my.floorCards"></MatgoCards>
-      <h1>내 카드 ({{ myHandCards.length }})</h1>
-      <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
-      <h1 />
-      <PlayCards :cards="playCards"></PlayCards>
+
+      <div class="player-card-group">
+        <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
+        <MatgoCards :cards="my.floorCards"></MatgoCards>
+
+        <h1>내 카드 ({{ myHandCards.length }})</h1>
+        <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
+        <h1 />
+        <PlayCards :cards="playCards"></PlayCards>
+      </div>
     </div>
     <hr />
     <div class="columns">
@@ -285,7 +293,10 @@ export default class Home extends Vue {
     });
   }
 
-  handCardClick(idx: number) {
+  /**
+   * 손에 있는 카드 치기
+   */
+  async handCardClick(idx: number) {
     const command: RequestMessageCommand = RequestMessageCommand.put;
     if (!this.room) {
       return;
@@ -302,7 +313,7 @@ export default class Home extends Vue {
       ids = [idx];
     } else if (ids.length === 3) {
       const sames = this.sameNums(this.floorCards, idx);
-      this.$swal(JSON.stringify(sames));
+      console.log("Home -> handCardClick -> this.floorCards", this.floorCards);
       if (sames.length === 0) {
         // 흔듬 선택
         this.shake(idx);
@@ -319,20 +330,20 @@ export default class Home extends Vue {
   }
 
   async shake(idx: number) {
-    const { value } = await this.$swal({
+    const result = await this.$swal({
       title: "흔들까요?",
       icon: "question",
       confirmButtonText: "예",
       cancelButtonText: "아니요",
-      showCancelButton: true
+      showCancelButton: true,
+      allowOutsideClick: false
     });
-    this.$swal(value as any);
-    console.log(idx);
-    // this.sendMessage(MessageType.play, {
-    //   sessionId: this.sessionId,
-    //   command: RequestMessageCommand.shake,
-    //   value: [num]
-    // });
+
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: result ? RequestMessageCommand.shake : RequestMessageCommand.put,
+      value: [idx]
+    });
   }
 
   backCardClick(num: number) {
@@ -360,7 +371,7 @@ export default class Home extends Vue {
    */
   sameNums(cards: MatgoCard[], idx: number): number[] {
     const nums: number[] = [];
-    const num = cards[idx].num;
+    const num = (this.myHandCards[idx] as MatgoCard).num;
     cards.forEach((card: MatgoCard, index) => {
       if (card.num === num) {
         nums.push(index);
@@ -396,4 +407,9 @@ export default class Home extends Vue {
 }
 </script>
 
-<style lang="sass"></style>
+<style lang="scss">
+.player-card-group {
+  background-color: #c4d1b5;
+  padding: 10px;
+}
+</style>

@@ -33,17 +33,16 @@ enum cAction {
   "0.없음" = 0,
   "1.이동",
   "2.받기",
-  "3.내리기",
-  "4.내기",
-  "5.쪽",
-  "6.뻑",
-  "7.따딱",
-  "8.폭탄",
-  "9.싹쓸이",
-  "10.뻑먹기",
-  "11.자뻑먹기",
-  "12.흔들기",
-  "13.상대피"
+  "3.내기",
+  "4.쪽",
+  "5.뻑",
+  "6.따닥",
+  "7.폭탄",
+  "8.싹쓸이",
+  "9.뻑먹기",
+  "10.짜뻑",
+  "11.흔들기",
+  "12.상대피"
 }
 
 import { Vue, Component } from "vue-property-decorator";
@@ -61,8 +60,8 @@ export default class PlayCards extends Vue {
     return "/img/cards/" + image + ".png";
   }
 
-  cardActionBg(card: any): string  {
-    return "card-action"+card.action;
+  cardActionBg(card: any): string {
+    return "card-action" + card.action;
   }
 
   cardMove(e: number) {
