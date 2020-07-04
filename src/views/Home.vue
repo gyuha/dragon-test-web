@@ -32,8 +32,8 @@
         <h1>내 카드 ({{ myHandCards.length }})</h1>
         <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
         <h1 />
-        <PlayCards :cards="playCards"></PlayCards>
       </div>
+      <PlayCards :cards="playCards"></PlayCards>
     </div>
     <hr />
     <div class="columns">
@@ -90,7 +90,6 @@
         </div>
       </form>
     </b-modal>
-    <hr />
     <json-view :data="stateData" />
   </div>
 </template>

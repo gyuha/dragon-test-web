@@ -25,4 +25,4 @@ export default class GameState extends Vue {
 }
 </script>
 
-<style lang="sass"></style>
+<style lang="scss"></style>

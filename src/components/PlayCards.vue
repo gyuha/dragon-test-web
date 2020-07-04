@@ -87,7 +87,43 @@ export default class PlayCards extends Vue {
     margin: 2px;
   }
 }
+.card-action0 {
+  background-color: #999;
+}
+.card-action1 {
+  background-color: #fff;
+}
 .card-action2 {
-  background-color: #ddd;
+  background-color: #f88;
+}
+.card-action3 {
+  background-color: #8fd;
+}
+.card-action4 {
+  background-color: #ddf;
+}
+.card-action5 {
+  background-color: #fdf;
+}
+.card-action6 {
+  background-color: #e9f;
+}
+.card-action7 {
+  background-color: #f83;
+}
+.card-action8 {
+  background-color: #3f3;
+}
+.card-action9 {
+  background-color: #99f;
+}
+.card-action10 {
+  background-color: #ff9;
+}
+.card-action11 {
+  background-color: #f33;
+}
+.card-action12 {
+  background-color: #f66;
 }
 </style>
