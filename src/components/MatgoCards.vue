@@ -1,19 +1,25 @@
 <template>
   <div class="card-group">
-    <img class="matgoCard" v-for="(card, idx) in cards" :key="idx" :src="imgPath(card.image)" @click="selectCard(idx)"/>
+    <img
+      class="matgoCard"
+      v-for="(card, idx) in cards"
+      :key="idx"
+      :src="imgPath(card.image)"
+      @click="selectCard(idx)"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 @Component({
   props: {
     cards: {
       type: Array,
-      default: [],
-    },
+      default: []
+    }
   },
-  components: {},
+  components: {}
 })
 export default class MatgoCards extends Vue {
   imgPath(image: string) {
@@ -28,7 +34,7 @@ export default class MatgoCards extends Vue {
 
 <style lang="scss">
 .card-group {
-  height: 70px;
+  min-height: 50px;
 }
 .matgoCard {
   width: 40px;

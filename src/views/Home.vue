@@ -24,6 +24,8 @@
       <MatgoCards :cards="my.floorCards"></MatgoCards>
       <h1>내 카드 ({{ myHandCards.length }})</h1>
       <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
+      <h1 />
+      <PlayCards :cards="playCards"></PlayCards>
     </div>
     <hr />
     <div class="columns">
@@ -103,12 +105,14 @@ import {
 } from "@/matgoSchema/MatgoType";
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
+import PlayCards from "@/components/PlayCards.vue";
 
 @Component({
   props: {},
   components: {
     GameState,
     MatgoCards,
+    PlayCards,
     "json-view": JSONView
   }
 })
@@ -130,6 +134,7 @@ export default class Home extends Vue {
 
   floorCards = [];
   selectCards = [];
+  playCards = [];
   backCardCount = 0;
   turn = "";
 
@@ -280,7 +285,8 @@ export default class Home extends Vue {
     });
   }
 
-  handCardClick(num: number) {
+  handCardClick(idx: number) {
+    const command: RequestMessageCommand = RequestMessageCommand.put;
     if (!this.room) {
       return;
     }
@@ -288,12 +294,45 @@ export default class Home extends Vue {
       this.toast("칠 차례가 아닙니다.", "is-danger");
       return;
     }
-    console.log("Home -> onHandCardSelect -> num", num);
+
+    let ids = this.sameNums(this.myHandCards, idx);
+
+    // 먹을게 2개 이면 그냥 선택한거 치기
+    if (ids.length === 2) {
+      ids = [idx];
+    } else if (ids.length === 3) {
+      const sames = this.sameNums(this.floorCards, idx);
+      this.$swal(JSON.stringify(sames));
+      if (sames.length === 0) {
+        // 흔듬 선택
+        this.shake(idx);
+        return;
+      }
+    }
+
+    console.log("Home -> onHandCardSelect -> num", idx);
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
-      command: RequestMessageCommand.put,
-      value: [num]
+      command,
+      value: ids
     });
+  }
+
+  async shake(idx: number) {
+    const { value } = await this.$swal({
+      title: "흔들까요?",
+      icon: "question",
+      confirmButtonText: "예",
+      cancelButtonText: "아니요",
+      showCancelButton: true
+    });
+    this.$swal(value as any);
+    console.log(idx);
+    // this.sendMessage(MessageType.play, {
+    //   sessionId: this.sessionId,
+    //   command: RequestMessageCommand.shake,
+    //   value: [num]
+    // });
   }
 
   backCardClick(num: number) {
@@ -307,6 +346,7 @@ export default class Home extends Vue {
         break;
       case ResponseMessageCommand.take:
         console.warn(message.playCards);
+        this.playCards = message.playCards as [];
         break;
       case ResponseMessageCommand.select:
         this.selectCards = message.cards as [];
@@ -315,14 +355,28 @@ export default class Home extends Vue {
     }
   }
 
+  /**
+   * 손에 든 같은 숫자의 갯수
+   */
+  sameNums(cards: MatgoCard[], idx: number): number[] {
+    const nums: number[] = [];
+    const num = cards[idx].num;
+    cards.forEach((card: MatgoCard, index) => {
+      if (card.num === num) {
+        nums.push(index);
+      }
+    });
+    return nums;
+  }
+
   // 카드 선택하기
-  onSelectCard(num: number) {
+  onSelectCard(idx: number) {
     this.isSelectModalActive = false;
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: RequestMessageCommand.select,
-      value: [num]
-    });
+      value: [idx]
+    } as RequestMessage);
   }
 
   toast(message: string, type = "is-warning") {
