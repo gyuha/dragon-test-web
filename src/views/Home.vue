@@ -361,6 +361,7 @@ export default class Home extends Vue {
       case ResponseMessageCommand.select:
         this.selectCards = message.cards as [];
         this.isSelectModalActive = true;
+        this.playCards = message.playCards as [];
         break;
     }
   }
