@@ -354,6 +354,9 @@ export default class Home extends Vue {
       case ResponseMessageCommand.handCards:
         this.myHandCards = message.cards as [];
         break;
+      case ResponseMessageCommand.startReady:
+        this.requestMessage(RequestMessageCommand.startBonus);
+        break;
       case ResponseMessageCommand.take:
         console.warn(message.playCards);
         this.playCards = message.playCards as [];
@@ -368,8 +371,15 @@ export default class Home extends Vue {
       message.command !== ResponseMessageCommand.handCards &&
       message.sessionId === this.sessionId
     ) {
-      this.requestHandCards();
+      this.requestMessage(RequestMessageCommand.handCards);
     }
+  }
+
+  requestMessage(req: RequestMessageCommand) {
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: req
+    } as RequestMessage);
   }
 
   requestHandCards() {
