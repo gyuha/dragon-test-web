@@ -366,6 +366,9 @@ export default class Home extends Vue {
         this.isSelectModalActive = true;
         this.playCards = message.playCards as [];
         break;
+      case ResponseMessageCommand.kookjin:
+        this.selectKookjin();
+        break;
     }
     if (
       message.command !== ResponseMessageCommand.handCards &&
@@ -411,6 +414,23 @@ export default class Home extends Vue {
       command: RequestMessageCommand.select,
       value: [idx]
     } as RequestMessage);
+  }
+
+  async selectKookjin() {
+    const result = await this.$swal({
+      title: "국진을 쌍피로 쓰시겠습니까?",
+      icon: "question",
+      confirmButtonText: "예",
+      cancelButtonText: "아니요",
+      showCancelButton: true,
+      allowOutsideClick: false
+    });
+
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: RequestMessageCommand.kookjin,
+      value: [result ? 1 : 0]
+    });
   }
 
   toast(message: string, type = "is-warning") {
