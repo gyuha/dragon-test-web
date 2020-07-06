@@ -364,6 +364,19 @@ export default class Home extends Vue {
         this.playCards = message.playCards as [];
         break;
     }
+    if (
+      message.command !== ResponseMessageCommand.handCards &&
+      message.sessionId === this.sessionId
+    ) {
+      this.requestHandCards();
+    }
+  }
+
+  requestHandCards() {
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: RequestMessageCommand.handCards
+    } as RequestMessage);
   }
 
   /**
