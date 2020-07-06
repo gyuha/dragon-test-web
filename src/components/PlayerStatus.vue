@@ -27,7 +27,7 @@
     <div class="control">
       <b-taglist attached>
         <b-tag type="is-dark">초단</b-tag>
-        <b-tag type="is-info">{{ status.cheongDan }}</b-tag>
+        <b-tag type="is-info">{{ status.choDan }}</b-tag>
       </b-taglist>
     </div>
     <div class="control">
@@ -60,7 +60,11 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 @Component({
-  props: {},
+  props: {
+    status: {
+      type: Object
+    }
+  },
   components: {}
 })
 export default class PlayerStatus extends Vue {}

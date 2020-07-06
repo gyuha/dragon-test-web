@@ -13,6 +13,7 @@
 
         <h1>상대가 먹은 카드 ({{ opposite.floorCards.length }})</h1>
         <MatgoCards :cards="opposite.floorCards"></MatgoCards>
+        <PlayerStatus :status="oppositeStatus"></PlayerStatus>
       </div>
 
       <h1>바닥 카드({{ floorCards.length }})</h1>
@@ -31,6 +32,7 @@
 
         <h1>내 카드 ({{ myHandCards.length }})</h1>
         <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
+        <PlayerStatus :status="myStatus"></PlayerStatus>
         <h1 />
       </div>
       <PlayCards :cards="playCards"></PlayCards>
@@ -113,6 +115,7 @@ import {
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
 import PlayCards from "@/components/PlayCards.vue";
+import PlayerStatus from "@/components/PlayerStatus.vue";
 
 @Component({
   props: {},
@@ -120,6 +123,7 @@ import PlayCards from "@/components/PlayCards.vue";
     GameState,
     MatgoCards,
     PlayCards,
+    PlayerStatus,
     "json-view": JSONView
   }
 })
@@ -136,6 +140,8 @@ export default class Home extends Vue {
 
   my: Player = new Player();
   opposite: Player = new Player();
+  myStatus: any;
+  oppositeStatus: any;
 
   myHandCards = [];
 
@@ -274,10 +280,19 @@ export default class Home extends Vue {
         this.opposite = player;
       }
     });
+    _.forEach(state.status, (status: any, key: string) => {
+      console.log(key);
+      if (this.sessionId == key) {
+        this.myStatus = {...status};
+      } else {
+        this.oppositeStatus = {...status};
+      }
+    });
     this.turn = state.turn;
     this.backCardCount = state.backCardCount;
     this.floorCards = state.floorCards;
     this.oppositeHandCardUpdate();
+    this.$forceUpdate();
   }
 
   firstCardClick(num: number) {
