@@ -6,8 +6,8 @@
       v-if="gameState == 'firstPick'"
       :cards="firstSelectCards"
     ></MatgoCards>
-    <div v-if="gameState === 'play'">
-      <div class="player-card-group">
+    <div v-if="gameState === 'play' || gameState === 'end'">
+      <div class="player-card-group" :class="[oppsiteBg()]">
         <h1>상대 카드({{ opposite.handCardCount }})</h1>
         <MatgoCards :cards="oppositeHandCards"></MatgoCards>
 
@@ -15,18 +15,25 @@
         <MatgoCards :cards="opposite.floorCards"></MatgoCards>
         <PlayerStatus :status="oppositeStatus"></PlayerStatus>
       </div>
-      <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
-      <MatgoCards
-        v-if="backCardCount > 0"
-        :cards="[backCard]"
-        @select="backCardClick"
-      ></MatgoCards>
 
+      <div v-if="gameState === 'play'">
+        <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
+        <MatgoCards
+          v-if="backCardCount > 0"
+          :cards="[backCard]"
+          @select="backCardClick"
+        ></MatgoCards>
+        <h1>바닥 카드({{ floorCards.length }})</h1>
+        <MatgoCards :cards="floorCards"></MatgoCards>
+      </div>
+      <div v-else-if="gameState === 'end'">
+        <h1>점수</h1>
 
-      <h1>바닥 카드({{ floorCards.length }})</h1>
-      <MatgoCards :cards="floorCards"></MatgoCards>
+        <b-button type="is-info" @click="startPlay">다음게임</b-button>
+        <b-button type="is-danger" @click="leave">나가기</b-button>
+      </div>
 
-      <div class="player-card-group">
+      <div class="player-card-group" :class="[myBg()]">
         <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
         <MatgoCards :cards="my.floorCards"></MatgoCards>
 
@@ -110,7 +117,8 @@ import { Player } from "@/matgoSchema/Player";
 import {
   MessageType,
   RequestMessageCommand,
-  ResponseMessageCommand
+  ResponseMessageCommand,
+  GoStopCommand
 } from "@/matgoSchema/MatgoType";
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
@@ -166,6 +174,17 @@ export default class Home extends Vue {
 
   get gameState() {
     return this.stateData.state;
+  }
+
+  oppsiteBg() {
+    return this.sessionId === (this.stateData as any).turn
+      ? "next-turn"
+      : "current-turn";
+  }
+  myBg() {
+    return this.sessionId === (this.stateData as any).turn
+      ? "current-turn"
+      : "next-turn";
   }
 
   oppositeHandCardUpdate() {
@@ -283,9 +302,9 @@ export default class Home extends Vue {
     _.forEach(state.status, (status: any, key: string) => {
       console.log(key);
       if (this.sessionId == key) {
-        this.myStatus = {...status};
+        this.myStatus = { ...status };
       } else {
-        this.oppositeStatus = {...status};
+        this.oppositeStatus = { ...status };
       }
     });
     this.turn = state.turn;
@@ -323,7 +342,7 @@ export default class Home extends Vue {
     let ids = this.sameNums(this.myHandCards, idx);
 
     // 먹을게 2개 이면 그냥 선택한거 치기
-    if (ids.length === 2) {
+    if (ids.length === 2 || ids.length === 4) {
       ids = [idx];
     } else if (ids.length === 3) {
       const sames = this.sameNums(this.floorCards, idx);
@@ -376,12 +395,16 @@ export default class Home extends Vue {
         console.warn(message.playCards);
         this.playCards = message.playCards as [];
         break;
+      case ResponseMessageCommand.goStop:
+        this.onGoStop(message);
+        break;
       case ResponseMessageCommand.select:
         this.selectCards = message.cards as [];
         this.isSelectModalActive = true;
         this.playCards = message.playCards as [];
         break;
       case ResponseMessageCommand.kookjin:
+        this.playCards = message.playCards as [];
         this.selectKookjin();
         break;
     }
@@ -431,6 +454,41 @@ export default class Home extends Vue {
     } as RequestMessage);
   }
 
+  onGoStop(message: ResponseMessage) {
+    if (!message.value) {
+      return;
+    }
+    const command = message.value[0];
+
+    switch (command) {
+      case GoStopCommand.goOrStop:
+        this.gostopModal();
+        break;
+      case GoStopCommand.go:
+        break;
+      case GoStopCommand.stop:
+        break;
+    }
+  }
+
+  // 고스톱 모달
+  async gostopModal() {
+    const result = await this.$swal({
+      title: "고하시겠습니까?",
+      icon: "question",
+      confirmButtonText: "예",
+      cancelButtonText: "아니요",
+      showCancelButton: true,
+      allowOutsideClick: false
+    });
+
+    this.sendMessage(MessageType.play, {
+      sessionId: this.sessionId,
+      command: RequestMessageCommand.goStop,
+      value: [result.value ? GoStopCommand.go : GoStopCommand.stop]
+    });
+  }
+
   async selectKookjin() {
     const result = await this.$swal({
       title: "국진을 쌍피로 쓰시겠습니까?",
@@ -467,7 +525,14 @@ export default class Home extends Vue {
 
 <style lang="scss">
 .player-card-group {
-  background-color: #c4d1b5;
   padding: 10px;
+}
+
+.next-turn {
+  background-color: #e6ecdf;
+}
+
+.current-turn {
+  background-color: #93b88b;
 }
 </style>
