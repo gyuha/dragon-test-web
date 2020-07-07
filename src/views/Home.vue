@@ -444,7 +444,7 @@ export default class Home extends Vue {
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: RequestMessageCommand.kookjin,
-      value: [result ? 1 : 0]
+      value: [result.value ? 1 : 0]
     });
   }
 
