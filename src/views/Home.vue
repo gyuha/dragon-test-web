@@ -15,16 +15,16 @@
         <MatgoCards :cards="opposite.floorCards"></MatgoCards>
         <PlayerStatus :status="oppositeStatus"></PlayerStatus>
       </div>
-
-      <h1>바닥 카드({{ floorCards.length }})</h1>
-      <MatgoCards :cards="floorCards"></MatgoCards>
-
       <h1>뒤집힌 카드 ({{ backCardCount }})</h1>
       <MatgoCards
         v-if="backCardCount > 0"
         :cards="[backCard]"
         @select="backCardClick"
       ></MatgoCards>
+
+
+      <h1>바닥 카드({{ floorCards.length }})</h1>
+      <MatgoCards :cards="floorCards"></MatgoCards>
 
       <div class="player-card-group">
         <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
