@@ -43,7 +43,8 @@ enum cAction {
   "10.짜뻑",
   "11.흔들기",
   "12.상대피",
-  "13.예약"
+  "13.예약",
+  "14.국진피"
 }
 
 import { Vue, Component } from "vue-property-decorator";
@@ -129,5 +130,9 @@ export default class PlayCards extends Vue {
 }
 .card-action13 {
   background-color: #f9f;
+}
+.card-action14 {
+  background-color: blue;
+  color: white;
 }
 </style>
