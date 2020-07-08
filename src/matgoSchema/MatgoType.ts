@@ -5,12 +5,16 @@ export enum MessageType {
   "error" = 30
 }
 
-export enum GoStopCommand {
-  'goOrStop' = 0,
-  'go',
-  'stop',
+export enum TurnCommand {
+  "stay" = 0, //! 턴 진행 중
+  "complete" = 1, //! 턴 완료
+  "goOrStop" = 2 //! 고스톱
 }
 
+export enum GoStopCommand {
+  "stop" = 0,
+  "go"
+}
 
 export enum RequestMessageCommand {
   "none" = 0,
@@ -20,8 +24,9 @@ export enum RequestMessageCommand {
   "goStop" = 40, //! 고 or 스톱
   "kookjin" = 50, //! 국진
   "shake" = 60, //! 흔들기
-  "startBonus" = 70,  //! 보너스 카드 요청하기
-  "playStart" = 80 //! 게임 시작하기
+  "startBonus" = 70, //! 시작 보너스 받기
+  "turnEnd" = 80, //! 턴 끝내기
+  "playStart" = 90 //! 다시 시작하기
 }
 
 export enum ResponseMessageCommand {
@@ -29,10 +34,10 @@ export enum ResponseMessageCommand {
   "take" = 10, //! 카드 받아가기
   "select" = 20, //! 카드 선택하기
   "handCards" = 30, //! 손에 있을 카드 조회
-  "goStop" = 40, //! 스톱
+  "gostop" = 40, //! 스톱
   "kookjin" = 50, //! 국진
   "shake" = 60, //! 국진
-  "startReady" = 70, //! 시작 대기 (보너스 카드 요청용)
-  "playStart" = 80, //! 게임 시작하기
+  "startReady" = 70, //! 시작 완료
+  "turnEnd" = 80, //! 턴 끝내기
   "error" = 100 //! 결과 종류
 }

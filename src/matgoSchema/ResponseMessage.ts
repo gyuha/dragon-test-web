@@ -6,7 +6,7 @@
 // 
 
 import { MatgoCard } from './MatgoCard';
-import { ResponseMessageCommand } from './MatgoType';
+import { ResponseMessageCommand, TurnCommand } from './MatgoType';
 import { PlayCard } from './PlayCard';
 
 export interface ResponseMessage {
@@ -18,5 +18,5 @@ export interface ResponseMessage {
   putCards?: MatgoCard[]; //! 낸 카드
   playerFloorCards?: MatgoCard[]; //! 플레이어의 바닥 카드
   message?: string; //! 메시지
-  nextSessionId?: string; //! 다음 턴 사용자 아이디
+  turn?: TurnCommand; //! 다음 턴 사용자 아이디
 }

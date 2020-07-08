@@ -118,7 +118,8 @@ import {
   MessageType,
   RequestMessageCommand,
   ResponseMessageCommand,
-  GoStopCommand
+  GoStopCommand,
+  TurnCommand
 } from "@/matgoSchema/MatgoType";
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
@@ -394,9 +395,7 @@ export default class Home extends Vue {
       case ResponseMessageCommand.take:
         console.warn(message.playCards);
         this.playCards = message.playCards as [];
-        break;
-      case ResponseMessageCommand.goStop:
-        this.onGoStop(message);
+        this.turnCommand(message);
         break;
       case ResponseMessageCommand.select:
         this.selectCards = message.cards as [];
@@ -421,6 +420,20 @@ export default class Home extends Vue {
       sessionId: this.sessionId,
       command: req
     } as RequestMessage);
+  }
+
+  turnCommand(message: ResponseMessage) {
+    switch (message.turn) {
+      case TurnCommand.complete: //! 턴이 완료 이면 다음턴으로 보낸다.
+        if (message.sessionId !== this.sessionId) return;
+        this.sendMessage(MessageType.play, {
+          command: RequestMessageCommand.turnEnd
+        } as RequestMessage);
+        break;
+      case TurnCommand.goOrStop:
+        this.gostopModal(message);
+        break;
+    }
   }
 
   requestHandCards() {
@@ -461,9 +474,6 @@ export default class Home extends Vue {
     const command = message.value[0];
 
     switch (command) {
-      case GoStopCommand.goOrStop:
-        this.gostopModal(message);
-        break;
       case GoStopCommand.go:
         break;
       case GoStopCommand.stop:
