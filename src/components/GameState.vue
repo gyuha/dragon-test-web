@@ -5,6 +5,7 @@
       <b-step-item label="ready" icon="account-key"></b-step-item>
       <b-step-item label="firstPick" icon="account"></b-step-item>
       <b-step-item label="play" icon="play"></b-step-item>
+      <b-step-item label="end" icon="pause"></b-step-item>
     </b-steps>
   </div>
 </template>
@@ -18,7 +19,7 @@ import { Vue, Component } from "vue-property-decorator";
   components: {}
 })
 export default class GameState extends Vue {
-  stateValues = ["none", "ready", "firstPick", "play"];
+  stateValues = ["none", "ready", "firstPick", "play", "end"];
   get stateValue() {
     return this.stateValues.indexOf(this.$props.value);
   }

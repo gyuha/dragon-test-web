@@ -28,9 +28,9 @@
       </div>
       <div v-else-if="gameState === 'end'">
         <h1>점수</h1>
-
-        <b-button type="is-info" @click="startPlay">다음게임</b-button>
-        <b-button type="is-danger" @click="leave">나가기</b-button>
+        <h2><b-tag v-if="my.startReady" type="is-dark">시작대기</b-tag></h2>
+        <b-button type="is-info" @click="playStart">다음게임</b-button>
+        <b-button type="is-danger" @click="playLeave">나가기</b-button>
       </div>
 
       <div class="player-card-group" :class="[myBg()]">
@@ -532,6 +532,25 @@ export default class Home extends Vue {
     if (this.room) {
       this.room.send(type, message);
     }
+  }
+
+  /**
+   * 게임 다시 하기
+   */
+  playStart() {
+    this.sendMessage(MessageType.end, {
+      command: RequestMessageCommand.playStart
+    } as RequestMessage);
+  }
+
+  /**
+   * 게임 끝내기
+   * @ 그냥 끝내도 되지만.. 서버에서 데이터 정리를 위해서... ^^;
+   */
+  playLeave() {
+    this.sendMessage(MessageType.end, {
+      command: RequestMessageCommand.playLeave
+    } as RequestMessage);
   }
 }
 </script>

@@ -2,7 +2,8 @@ export enum MessageType {
   "startGame" = 0,
   "firstPick" = 10,
   "play" = 20,
-  "error" = 30
+  "end" = 30,
+  "error" = 100
 }
 
 export enum TurnCommand {
@@ -26,7 +27,8 @@ export enum RequestMessageCommand {
   "shake" = 60, //! 흔들기
   "startBonus" = 70, //! 시작 보너스 받기
   "turnEnd" = 80, //! 턴 끝내기
-  "playStart" = 90 //! 다시 시작하기
+  "playStart" = 90, //! 다시 시작하기
+  "playLeave" = 91 //! 게임 끝내기
 }
 
 export enum ResponseMessageCommand {
