@@ -181,6 +181,12 @@ export default class Matgo extends Vue {
     this.roomInfoLoad();
   }
 
+  unmounted() {
+    if (this.room) {
+      this.room.leave();
+    }
+  }
+
   async roomInfoLoad() {
     const host = `//${process.env.VUE_APP_SERVER_HOST}`;
     const res = await Axios.get(`${host}/api/lobby/room/${this.$props.id}`);

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>맞고</h1>
+  <div class="lobby">
+    <h1>무명 맞고</h1>
     <b-carousel-list v-model="page" :data="items" :arrow-hover="false">
       <template slot="item" slot-scope="props">
         <router-link :to="'/matgo/' + props.list.id">
@@ -12,7 +12,7 @@
               <span class="date">
                 {{ props.list.name }} / {{ props.list.grade }}</span
               >
-              <h1>점 {{ props.list.point }}</h1>
+              <h2>점 {{ props.list.point }}</h2>
               <p>최소금액 : {{ props.list.money }}</p>
             </div>
             <div class="card-outmore">
@@ -66,105 +66,112 @@ export default class Lobby extends Vue {
 </script>
 
 <style lang="scss">
-a {
-  color: currentColor;
-  text-decoration: none;
-}
+.lobby {
+  h1 {
+    line-height: 300%;
+    font-size: 50px;
+    font-weight: 900;
+  }
+  a {
+    color: currentColor;
+    text-decoration: none;
+  }
 
-p {
-  font-size: 13px;
-}
+  p {
+    font-size: 13px;
+  }
 
-a:hover .card-outmore {
-  background: #2c3e50;
-  color: #fff;
-}
+  a:hover .card-outmore {
+    background: #2c3e50;
+    color: #fff;
+  }
 
-a:hover .thecard {
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
-}
+  a:hover .thecard {
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+  }
 
-.thecard {
-  width: 90%;
-  margin: 5% auto;
-  box-shadow: 0 1px 30px rgba(0, 0, 0, 0.4);
-  display: block;
-  transition: 400ms ease;
-}
+  .thecard {
+    width: 90%;
+    margin: 5% auto;
+    box-shadow: 0 1px 30px rgba(0, 0, 0, 0.4);
+    display: block;
+    transition: 400ms ease;
+  }
 
-.card-img {
-}
+  .card-img {
+  }
 
-.card-img img {
-  width: 100%;
-  border-radius: 4px 4px 0px 0px;
-}
+  .card-img img {
+    width: 100%;
+    border-radius: 4px 4px 0px 0px;
+  }
 
-.card-caption {
-  position: relative;
-  background: #ffffff;
-  padding: 15px 25px 5px 25px;
-  border-radius: 0px 0px 4px 4px;
-}
+  .card-caption {
+    position: relative;
+    background: #ffffff;
+    padding: 15px 25px 5px 25px;
+    border-radius: 0px 0px 4px 4px;
+  }
 
-.card-outmore {
-  padding: 10px 25px 10px 25px;
-  border-radius: 0px 0px 4px 4px;
-  border-top: 1px solid #e0e0e0;
-  background: #efefef;
-  color: #222;
-  display: inline-table;
-  width: 100%;
-  box-sizing: border-box;
-  transition: 400ms ease;
-}
-.card-outmore h5 {
-  float: left;
-}
-.card-outmore i {
-  float: right;
-}
+  .card-outmore {
+    padding: 10px 25px 10px 25px;
+    border-radius: 0px 0px 4px 4px;
+    border-top: 1px solid #e0e0e0;
+    background: #efefef;
+    color: #222;
+    display: inline-table;
+    width: 100%;
+    box-sizing: border-box;
+    transition: 400ms ease;
+  }
+  .card-outmore h5 {
+    float: left;
+  }
+  .card-outmore i {
+    float: right;
+  }
 
-span.date {
-  font-size: 10px;
-}
+  span.date {
+    font-size: 10px;
+  }
 
-h1 {
-  font-size: 22px;
-}
+  h2 {
+    font-size: 22px;
+  }
 
-h5 {
-  margin: 0;
-}
+  h5 {
+    margin: 0;
+  }
 
-#like-btn {
-  font-size: 18px;
-  background: #446cb3;
-  color: #fff;
-  padding: 13px 15px;
-  border-radius: 50em;
-  position: absolute;
-  right: 20px;
-  top: -22px;
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
-  transition: 400ms ease;
-}
+  #like-btn {
+    font-size: 18px;
+    background: #446cb3;
+    color: #fff;
+    padding: 13px 15px;
+    border-radius: 50em;
+    position: absolute;
+    right: 20px;
+    top: -22px;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+    transition: 400ms ease;
+  }
 
-#like-btn:hover {
-  font-size: 18px;
-  background: #3b5998;
-  color: #fff;
-  padding: 13px 15px;
-  border-radius: 50em;
-  position: absolute;
-  right: 20px;
-  top: -22px;
-  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
-}
+  #like-btn:hover {
+    font-size: 18px;
+    background: #3b5998;
+    color: #fff;
+    padding: 13px 15px;
+    border-radius: 50em;
+    position: absolute;
+    right: 20px;
+    top: -22px;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
+  }
 
-#outmore-icon {
-  border: 1px solid;
-  padding: 1px 6px;
-  border-radius: 50em;
+  #outmore-icon {
+    border: 1px solid;
+    padding: 1px 6px;
+    border-radius: 50em;
+  }
 }
 </style>
