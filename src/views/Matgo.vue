@@ -30,7 +30,7 @@
         <h1>점수</h1>
         <h2><b-tag v-if="my.startReady" type="is-dark">시작대기</b-tag></h2>
         <b-button type="is-info" @click="playStart">다음게임</b-button>
-        <b-button type="is-danger" @click="playLeave">나가기</b-button>
+        <b-button type="is-danger" @click="playLeave();$router.push('/');">나가기</b-button>
       </div>
 
       <div class="player-card-group" :class="[myBg()]">
@@ -83,7 +83,7 @@
         >
         <b-button
           type="is-danger"
-          @click="$router.push('/')"
+          @click="playLeave();$router.push('/');"
           :disabled="gameState == 'play'"
           >Lobby</b-button
         >
@@ -181,7 +181,7 @@ export default class Matgo extends Vue {
     this.roomInfoLoad();
   }
 
-  unmounted() {
+  beforeDestory() {
     if (this.room) {
       this.room.leave();
     }
@@ -359,6 +359,9 @@ export default class Matgo extends Vue {
    * 손에 있는 카드 치기
    */
   async handCardClick(idx: number) {
+    if (this.stateData.state !== 'play') {
+      return;
+    }
     const command: RequestMessageCommand = RequestMessageCommand.put;
     if (!this.room) {
       return;
