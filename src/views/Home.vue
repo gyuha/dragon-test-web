@@ -462,7 +462,7 @@ export default class Home extends Vue {
 
     switch (command) {
       case GoStopCommand.goOrStop:
-        this.gostopModal();
+        this.gostopModal(message);
         break;
       case GoStopCommand.go:
         break;
@@ -472,7 +472,10 @@ export default class Home extends Vue {
   }
 
   // 고스톱 모달
-  async gostopModal() {
+  async gostopModal(message: ResponseMessage) {
+    if (message.sessionId !== this.sessionId) {
+      return;
+    }
     const result = await this.$swal({
       title: "고하시겠습니까?",
       icon: "question",
