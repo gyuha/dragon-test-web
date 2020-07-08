@@ -46,7 +46,7 @@
     </div>
     <hr />
     <div class="columns">
-      <div class="column is-three-quarters">
+      <div class="column">
         <b-field grouped group-multiline>
           <div class="control">
             <b-taglist attached>
@@ -81,6 +81,12 @@
           :disabled="gameState == 'none'"
           >Leave</b-button
         >
+        <b-button
+          type="is-danger"
+          @click="$router.push('/')"
+          :disabled="gameState == 'play'"
+          >Lobby</b-button
+        >
       </div>
     </div>
     <b-modal
@@ -100,6 +106,7 @@
       </form>
     </b-modal>
     <json-view :data="stateData" />
+    {{ id }} : {{ roomInfo }}
   </div>
 </template>
 
@@ -125,9 +132,12 @@ import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
 import PlayCards from "@/components/PlayCards.vue";
 import PlayerStatus from "@/components/PlayerStatus.vue";
+import Axios from 'axios';
 
 @Component({
-  props: {},
+  props: {
+    id: String
+  },
   components: {
     GameState,
     MatgoCards,
@@ -136,7 +146,7 @@ import PlayerStatus from "@/components/PlayerStatus.vue";
     "json-view": JSONView
   }
 })
-export default class Home extends Vue {
+export default class Matgo extends Vue {
   client!: Colyseus.Client;
   room: Colyseus.Room | null = null;
   messageType = "";
@@ -164,6 +174,18 @@ export default class Home extends Vue {
   oppositeHandCards: MatgoCard[] = [];
 
   isSelectModalActive = false;
+
+  roomInfo = {};
+
+  created() {
+    this.roomInfoLoad();
+  }
+
+  async roomInfoLoad() {
+    const host = `//${process.env.VUE_APP_SERVER_HOST}`;
+    const res = await Axios.get(`${host}/api/lobby/room/${this.$props.id}`);
+    this.roomInfo = res.data;
+  }
 
   get roomId() {
     return this.room ? this.room.id : "";
@@ -228,7 +250,7 @@ export default class Home extends Vue {
     console.log(host);
     this.client = new Colyseus.Client(host);
     this.client
-      .joinOrCreate("room1")
+      .joinOrCreate(this.$props.id)
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
