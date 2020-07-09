@@ -30,7 +30,14 @@
         <h1>점수</h1>
         <h2><b-tag v-if="my.startReady" type="is-dark">시작대기</b-tag></h2>
         <b-button type="is-info" @click="playStart">다음게임</b-button>
-        <b-button type="is-danger" @click="playLeave();$router.push('/');">나가기</b-button>
+        <b-button
+          type="is-danger"
+          @click="
+            playLeave();
+            $router.push('/');
+          "
+          >나가기</b-button
+        >
       </div>
 
       <div class="player-card-group" :class="[myBg()]">
@@ -83,7 +90,10 @@
         >
         <b-button
           type="is-danger"
-          @click="playLeave();$router.push('/');"
+          @click="
+            playLeave();
+            $router.push('/');
+          "
           :disabled="gameState == 'play'"
           >Lobby</b-button
         >
@@ -132,7 +142,7 @@ import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
 import PlayCards from "@/components/PlayCards.vue";
 import PlayerStatus from "@/components/PlayerStatus.vue";
-import Axios from 'axios';
+import Axios from "axios";
 
 @Component({
   props: {
@@ -359,7 +369,7 @@ export default class Matgo extends Vue {
    * 손에 있는 카드 치기
    */
   async handCardClick(idx: number) {
-    if (this.stateData.state !== 'play') {
+    if (this.stateData.state !== "play") {
       return;
     }
     const command: RequestMessageCommand = RequestMessageCommand.put;
@@ -514,11 +524,12 @@ export default class Matgo extends Vue {
 
   // 고스톱 모달
   async gostopModal(message: ResponseMessage) {
-    if (message.sessionId !== this.sessionId) {
+    if (message.sessionId !== this.sessionId || !message.value) {
       return;
     }
+    console.log(message.value);
     const result = await this.$swal({
-      title: "고하시겠습니까?",
+      title: `고하시겠습니까?<br/> 상금 : ${message.value[1]}`,
       icon: "question",
       confirmButtonText: "예",
       cancelButtonText: "아니요",
