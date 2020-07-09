@@ -9,7 +9,8 @@ export enum MessageType {
 export enum TurnCommand {
   "stay" = 0, //! 턴 진행 중
   "complete" = 1, //! 턴 완료
-  "goOrStop" = 2 //! 고스톱
+  "goOrStop" = 2, //! 고스톱
+  "chongTong" = 3 //! 총통
 }
 
 export enum GoStopCommand {

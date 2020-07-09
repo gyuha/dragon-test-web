@@ -474,6 +474,9 @@ export default class Matgo extends Vue {
       case TurnCommand.goOrStop:
         this.gostopModal(message);
         break;
+      case TurnCommand.chongTong:
+        this.chongTongModal(message);
+        break;
     }
   }
 
@@ -544,6 +547,17 @@ export default class Matgo extends Vue {
       sessionId: this.sessionId,
       command: RequestMessageCommand.goStop,
       value: [result.value ? GoStopCommand.go : GoStopCommand.stop]
+    });
+  }
+
+  async chongTongModal(message: ResponseMessage) {
+    const result = await this.$swal({
+      title: "총통?",
+      icon: "success",
+      confirmButtonText: "OK",
+      // cancelButtonText: "아니요",
+      // showCancelButton: true,
+      allowOutsideClick: false
     });
   }
 

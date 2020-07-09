@@ -44,7 +44,8 @@ enum cAction {
   "11.흔들기",
   "12.상대피",
   "13.예약",
-  "14.국진피"
+  "14.국진피",
+  "15.총통"
 }
 
 import { Vue, Component } from "vue-property-decorator";
