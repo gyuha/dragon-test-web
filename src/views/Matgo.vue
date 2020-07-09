@@ -129,7 +129,7 @@ import { JSONView } from "vue-json-component";
 import GameState from "@/components/GameState.vue";
 import _ from "lodash";
 import MatgoCards from "@/components/MatgoCards.vue";
-import { MatgoCard } from "../matgoSchema/MatgoCard";
+import { MatgoCard, CardType } from "../matgoSchema/MatgoCard";
 import { Player } from "@/matgoSchema/Player";
 import {
   MessageType,
@@ -490,6 +490,9 @@ export default class Matgo extends Vue {
   sameNums(cards: MatgoCard[], idx: number): number[] {
     const nums: number[] = [];
     const num = (this.myHandCards[idx] as MatgoCard).num;
+    if (cards[idx].cardType === CardType.BOMB) {
+      return [idx];
+    }
     cards.forEach((card: MatgoCard, index) => {
       if (card.num === num) {
         nums.push(index);
@@ -529,7 +532,7 @@ export default class Matgo extends Vue {
     }
     console.log(message.value);
     const result = await this.$swal({
-      title: `고하시겠습니까?<br/> 상금 : ${message.value[1]}`,
+      title: `고하시겠습니까?<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
       icon: "question",
       confirmButtonText: "예",
       cancelButtonText: "아니요",
