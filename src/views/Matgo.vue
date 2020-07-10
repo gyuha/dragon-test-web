@@ -185,6 +185,9 @@ export default class Matgo extends Vue {
 
   isSelectModalActive = false;
 
+  startDelay = 750;  //! 게임을 시작하자 마자 카드를 내면 안 됨 애니메이션 대기 시간이 필요
+  playStated = false; //! 게임 시작 중인지 체크
+
   roomInfo = {};
 
   created() {
@@ -317,6 +320,7 @@ export default class Matgo extends Vue {
       this.firstSelectCards = message.cards as MatgoCard[];
       console.log("Home -> eventRegister -> message", message);
     });
+
     //! 게임 플레이
     this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
       this.messageType = "play";
@@ -369,6 +373,10 @@ export default class Matgo extends Vue {
    * 손에 있는 카드 치기
    */
   async handCardClick(idx: number) {
+    if (this.playStated === false) {
+      this.toast("애니메이션이 끝날때 까지 대기..", "is-danger");
+      return;
+    }
     if (this.stateData.state !== "play") {
       return;
     }
@@ -428,10 +436,14 @@ export default class Matgo extends Vue {
   onPlayMessage(message: ResponseMessage) {
     switch (message.command) {
       case ResponseMessageCommand.handCards:
+        this.playStated = false;
         this.myHandCards = message.cards as [];
+        setTimeout(this.setStartDelay, this.startDelay);
         break;
       case ResponseMessageCommand.startReady:
+        this.playStated = false;
         this.requestMessage(RequestMessageCommand.startBonus);
+        setTimeout(this.setStartDelay, this.startDelay);
         break;
       case ResponseMessageCommand.take:
         console.warn(message.playCards);
@@ -454,6 +466,10 @@ export default class Matgo extends Vue {
     ) {
       this.requestMessage(RequestMessageCommand.handCards);
     }
+  }
+
+  setStartDelay() {
+    this.playStated = true;
   }
 
   requestMessage(req: RequestMessageCommand) {
