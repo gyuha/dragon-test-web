@@ -10,7 +10,8 @@ export enum TurnCommand {
   "stay" = 0, //! 턴 진행 중
   "complete" = 1, //! 턴 완료
   "goOrStop" = 2, //! 고스톱
-  "chongTong" = 3 //! 총통
+  "chongTong" = 3, //! 총통
+  "lastTurnStop" = 4 //! 마지막 턴으로 게임 끝내기
 }
 
 export enum GoStopCommand {

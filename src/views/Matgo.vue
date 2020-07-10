@@ -477,6 +477,9 @@ export default class Matgo extends Vue {
       case TurnCommand.chongTong:
         this.chongTongModal(message);
         break;
+      case TurnCommand.lastTurnStop:
+        this.lastStopModal(message);
+        break;
     }
   }
 
@@ -535,7 +538,7 @@ export default class Matgo extends Vue {
     }
     console.log(message.value);
     const result = await this.$swal({
-      title: `고하시겠습니까?<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
+      title: `${this.myStatus.goCount + 1}고하시겠습니까?<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
       icon: "question",
       confirmButtonText: "예",
       cancelButtonText: "아니요",
@@ -547,6 +550,19 @@ export default class Matgo extends Vue {
       sessionId: this.sessionId,
       command: RequestMessageCommand.goStop,
       value: [result.value ? GoStopCommand.go : GoStopCommand.stop]
+    });
+  }
+
+  async lastStopModal(message: ResponseMessage) {
+    if (message.sessionId !== this.sessionId || !message.value) {
+      return;
+    }
+    console.log(message.value);
+    await this.$swal({
+      title: `났습니다.<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
+      icon: "success",
+      confirmButtonText: "예",
+      allowOutsideClick: false
     });
   }
 
