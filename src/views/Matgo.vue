@@ -185,7 +185,7 @@ export default class Matgo extends Vue {
 
   isSelectModalActive = false;
 
-  startDelay = 750;  //! 게임을 시작하자 마자 카드를 내면 안 됨 애니메이션 대기 시간이 필요
+  startDelay = 750; //! 게임을 시작하자 마자 카드를 내면 안 됨 애니메이션 대기 시간이 필요
   playStated = false; //! 게임 시작 중인지 체크
 
   roomInfo = {};
@@ -554,7 +554,9 @@ export default class Matgo extends Vue {
     }
     console.log(message.value);
     const result = await this.$swal({
-      title: `${this.myStatus.goCount + 1}고하시겠습니까?<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
+      title: `${this.myStatus.goCount + 1}고하시겠습니까?<br/>점수: ${
+        message.value[0]
+      }<br/> 상금 : ${message.value[1]}`,
       icon: "question",
       confirmButtonText: "예",
       cancelButtonText: "아니요",
@@ -583,14 +585,16 @@ export default class Matgo extends Vue {
   }
 
   async chongTongModal(message: ResponseMessage) {
+    console.log(message);
     const result = await this.$swal({
       title: "총통?",
       icon: "success",
       confirmButtonText: "OK",
-      // cancelButtonText: "아니요",
-      // showCancelButton: true,
+      cancelButtonText: "아니요",
+      showCancelButton: true,
       allowOutsideClick: false
     });
+    console.log(result);
   }
 
   async selectKookjin() {

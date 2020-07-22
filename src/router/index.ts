@@ -16,7 +16,13 @@ const routes: Array<RouteConfig> = [
     name: "Matgo",
     component: Matgo,
     props: true
-  }
+  },
+  {
+    path: '/holdem/:id', 
+    name: "Holdem",
+    component: Holdem,
+    props: true
+  },
 ];
 
 const router = new VueRouter({
