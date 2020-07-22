@@ -1,22 +1,16 @@
 <template>
-<div>
-</div>
+  <div></div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 @Component({
   props: {
-    room: Object 
+    room: Object,
   },
   components: {},
 })
-export default class Room extends Vue {
-
-}
+export default class Room extends Vue {}
 </script>
 
-<style lang="scss">
-
-</style>
-
+<style lang="scss"></style>

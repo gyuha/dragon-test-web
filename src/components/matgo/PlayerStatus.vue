@@ -58,14 +58,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component } from 'vue-property-decorator';
 @Component({
   props: {
     status: {
-      type: Object
-    }
+      type: Object,
+    },
   },
-  components: {}
+  components: {},
 })
 export default class PlayerStatus extends Vue {}
 </script>

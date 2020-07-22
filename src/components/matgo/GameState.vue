@@ -11,15 +11,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component } from 'vue-property-decorator';
 @Component({
   props: {
-    value: String
+    value: String,
   },
-  components: {}
+  components: {},
 })
 export default class GameState extends Vue {
-  stateValues = ["none", "ready", "firstPick", "play", "end"];
+  stateValues = ['none', 'ready', 'firstPick', 'play', 'end'];
   get stateValue() {
     return this.stateValues.indexOf(this.$props.value);
   }

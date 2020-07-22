@@ -76,18 +76,10 @@
         </b-field>
       </div>
       <div class="column">
-        <b-button
-          type="is-info"
-          @click="joinRoom"
-          :disabled="gameState != 'none'"
+        <b-button type="is-info" @click="joinRoom" :disabled="gameState != 'none'"
           >Join Room</b-button
         >
-        <b-button
-          type="is-danger"
-          @click="leave"
-          :disabled="gameState == 'none'"
-          >Leave</b-button
-        >
+        <b-button type="is-danger" @click="leave" :disabled="gameState == 'none'">Leave</b-button>
         <b-button
           type="is-danger"
           @click="
@@ -99,11 +91,7 @@
         >
       </div>
     </div>
-    <b-modal
-      :active.sync="isSelectModalActive"
-      has-modal-card
-      :can-cancel="false"
-    >
+    <b-modal :active.sync="isSelectModalActive" has-modal-card :can-cancel="false">
       <form action="">
         <div class="modal-card" style="width: auto">
           <header class="modal-card-head">
@@ -115,54 +103,55 @@
         </div>
       </form>
     </b-modal>
+    <hr />
     <json-view :data="stateData" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import * as Colyseus from "colyseus.js";
+import { Vue, Component } from 'vue-property-decorator';
+import * as Colyseus from 'colyseus.js';
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { JSONView } from "vue-json-component";
-import GameState from "@/components/matgo/GameState.vue";
-import _ from "lodash";
-import MatgoCards from "@/components/matgo/MatgoCards.vue";
-import { MatgoCard, CardType } from "../matgoSchema/MatgoCard";
-import { Player } from "@/matgoSchema/Player";
+import { JSONView } from 'vue-json-component';
+import GameState from '@/components/matgo/GameState.vue';
+import _ from 'lodash';
+import MatgoCards from '@/components/matgo/MatgoCards.vue';
+import { MatgoCard, CardType } from '../matgoSchema/MatgoCard';
+import { Player } from '@/matgoSchema/Player';
 import {
   MessageType,
   RequestMessageCommand,
   ResponseMessageCommand,
   GoStopCommand,
-  TurnCommand
-} from "@/matgoSchema/MatgoType";
-import { ResponseMessage } from "../matgoSchema/ResponseMessage";
-import { RequestMessage } from "@/matgoSchema/RequestMessage";
-import PlayCards from "@/components/matgo/PlayCards.vue";
-import PlayerStatus from "@/components/matgo/PlayerStatus.vue";
-import Axios from "axios";
+  TurnCommand,
+} from '@/matgoSchema/MatgoType';
+import { ResponseMessage } from '../matgoSchema/ResponseMessage';
+import { RequestMessage } from '@/matgoSchema/RequestMessage';
+import PlayCards from '@/components/matgo/PlayCards.vue';
+import PlayerStatus from '@/components/matgo/PlayerStatus.vue';
+import Axios from 'axios';
 
 @Component({
   props: {
-    id: String
+    id: String,
   },
   components: {
     GameState,
     MatgoCards,
     PlayCards,
     PlayerStatus,
-    "json-view": JSONView
-  }
+    'json-view': JSONView,
+  },
 })
 export default class Matgo extends Vue {
   client!: Colyseus.Client;
   room: Colyseus.Room | null = null;
-  messageType = "";
+  messageType = '';
 
   stateData = {
-    state: "none"
+    state: 'none',
   };
 
   firstSelectCards: MatgoCard[] = [];
@@ -178,7 +167,7 @@ export default class Matgo extends Vue {
   selectCards = [];
   playCards = [];
   backCardCount = 0;
-  turn = "";
+  turn = '';
 
   backCard: MatgoCard = new MatgoCard();
   oppositeHandCards: MatgoCard[] = [];
@@ -202,16 +191,16 @@ export default class Matgo extends Vue {
 
   async roomInfoLoad() {
     const host = `//${process.env.VUE_APP_SERVER_HOST}`;
-    const res = await Axios.get(`${host}/api/lobby/room/${this.$props.id}`);
+    const res = await Axios.get(`${host}/api/matgo/room/${this.$props.id}`);
     this.roomInfo = res.data;
   }
 
   get roomId() {
-    return this.room ? this.room.id : "";
+    return this.room ? this.room.id : '';
   }
 
   get sessionId() {
-    return this.room ? this.room.sessionId : "";
+    return this.room ? this.room.sessionId : '';
   }
 
   get gameState() {
@@ -219,14 +208,10 @@ export default class Matgo extends Vue {
   }
 
   oppsiteBg() {
-    return this.sessionId === (this.stateData as any).turn
-      ? "next-turn"
-      : "current-turn";
+    return this.sessionId === (this.stateData as any).turn ? 'next-turn' : 'current-turn';
   }
   myBg() {
-    return this.sessionId === (this.stateData as any).turn
-      ? "current-turn"
-      : "next-turn";
+    return this.sessionId === (this.stateData as any).turn ? 'current-turn' : 'next-turn';
   }
 
   oppositeHandCardUpdate() {
@@ -241,14 +226,14 @@ export default class Matgo extends Vue {
     this.backCard.id = -1;
     this.backCard.num = -1;
     this.backCard.tag = -1;
-    this.backCard.image = "back";
+    this.backCard.image = 'back';
   }
 
   leaveAction() {
     this.stateData = {
-      state: "none"
+      state: 'none',
     };
-    this.messageType = "";
+    this.messageType = '';
     this.room = null;
   }
 
@@ -256,7 +241,7 @@ export default class Matgo extends Vue {
     if (!this.room) {
       return;
     }
-    console.log("leave room", this.room.id);
+    console.log('leave room', this.room.id);
     this.room.leave();
     this.leaveAction();
   }
@@ -273,11 +258,11 @@ export default class Matgo extends Vue {
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
-        console.log("Home -> joinRoom -> this.room", this.room.state);
+        console.log('Home -> joinRoom -> this.room', this.room.state);
         this.eventRegister();
       })
       .catch((e: unknown) => {
-        console.log("JOIN ERROR", e);
+        console.log('JOIN ERROR', e);
       });
   }
 
@@ -287,7 +272,7 @@ export default class Matgo extends Vue {
     }
     this.room.onStateChange((state: any) => {
       this.stateData = _.clone(state);
-      if (this.gameState === "play") {
+      if (this.gameState === 'play') {
         this.playCardsDisplay(state);
       }
       this.$forceUpdate();
@@ -295,41 +280,41 @@ export default class Matgo extends Vue {
 
     //! 게임 시작 여부
     this.room.onMessage(MessageType.startGame, () => {
-      this.messageType = "startGame";
+      this.messageType = 'startGame';
       this.$swal({
-        title: "게임 시작",
-        text: "사용자가 입장 했습니다.",
-        icon: "warning",
+        title: '게임 시작',
+        text: '사용자가 입장 했습니다.',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "시작",
-        cancelButtonText: "내보내기"
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '시작',
+        cancelButtonText: '내보내기',
       }).then((result: any) => {
         console.log(result);
         this.sendMessage(MessageType.startGame, {
           sessionId: this.sessionId,
           command: RequestMessageCommand.put,
-          value: [result.value ? 1 : 0]
+          value: [result.value ? 1 : 0],
         });
       });
     });
     //! 선 고르기
     this.room.onMessage(MessageType.firstPick, (message: ResponseMessage) => {
-      this.messageType = "firstSelect";
+      this.messageType = 'firstSelect';
       this.firstSelectCards = message.cards as MatgoCard[];
-      console.log("Home -> eventRegister -> message", message);
+      console.log('Home -> eventRegister -> message', message);
     });
 
     //! 게임 플레이
     this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
-      this.messageType = "play";
+      this.messageType = 'play';
       this.onPlayMessage(message);
     });
 
     //! 게임에서 내보내 질때
-    this.room.onLeave(code => {
-      console.log("Home -> eventRegister -> code", code);
+    this.room.onLeave((code) => {
+      console.log('Home -> eventRegister -> code', code);
       this.leaveAction();
     });
   }
@@ -361,11 +346,11 @@ export default class Matgo extends Vue {
     if (!this.room) {
       return;
     }
-    console.log("firstPick: " + num);
+    console.log('firstPick: ' + num);
     this.sendMessage(MessageType.firstPick, {
       command: RequestMessageCommand.none,
       sessionId: this.sessionId,
-      value: [num]
+      value: [num],
     });
   }
 
@@ -374,10 +359,10 @@ export default class Matgo extends Vue {
    */
   async handCardClick(idx: number) {
     if (this.playStated === false) {
-      this.toast("애니메이션이 끝날때 까지 대기..", "is-danger");
+      this.toast('애니메이션이 끝날때 까지 대기..', 'is-danger');
       return;
     }
-    if (this.stateData.state !== "play") {
+    if (this.stateData.state !== 'play') {
       return;
     }
     const command: RequestMessageCommand = RequestMessageCommand.put;
@@ -385,7 +370,7 @@ export default class Matgo extends Vue {
       return;
     }
     if (this.turn !== this.sessionId) {
-      this.toast("칠 차례가 아닙니다.", "is-danger");
+      this.toast('칠 차례가 아닙니다.', 'is-danger');
       return;
     }
 
@@ -396,7 +381,7 @@ export default class Matgo extends Vue {
       ids = [idx];
     } else if (ids.length === 3) {
       const sames = this.sameNums(this.floorCards, idx);
-      console.log("Home -> handCardClick -> this.floorCards", this.floorCards);
+      console.log('Home -> handCardClick -> this.floorCards', this.floorCards);
       if (sames.length === 0) {
         // 흔듬 선택
         this.shake(idx);
@@ -404,33 +389,33 @@ export default class Matgo extends Vue {
       }
     }
 
-    console.log("Home -> onHandCardSelect -> num", idx);
+    console.log('Home -> onHandCardSelect -> num', idx);
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command,
-      value: ids
+      value: ids,
     });
   }
 
   async shake(idx: number) {
     const result = await this.$swal({
-      title: "흔들까요?",
-      icon: "question",
-      confirmButtonText: "예",
-      cancelButtonText: "아니요",
+      title: '흔들까요?',
+      icon: 'question',
+      confirmButtonText: '예',
+      cancelButtonText: '아니요',
       showCancelButton: true,
-      allowOutsideClick: false
+      allowOutsideClick: false,
     });
 
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: result ? RequestMessageCommand.shake : RequestMessageCommand.put,
-      value: [idx]
+      value: [idx],
     });
   }
 
   backCardClick(num: number) {
-    console.log("Home -> backCardClick -> num", num);
+    console.log('Home -> backCardClick -> num', num);
   }
 
   onPlayMessage(message: ResponseMessage) {
@@ -475,7 +460,7 @@ export default class Matgo extends Vue {
   requestMessage(req: RequestMessageCommand) {
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
-      command: req
+      command: req,
     } as RequestMessage);
   }
 
@@ -484,7 +469,7 @@ export default class Matgo extends Vue {
       case TurnCommand.complete: //! 턴이 완료 이면 다음턴으로 보낸다.
         if (message.sessionId !== this.sessionId) return;
         this.sendMessage(MessageType.play, {
-          command: RequestMessageCommand.turnEnd
+          command: RequestMessageCommand.turnEnd,
         } as RequestMessage);
         break;
       case TurnCommand.goOrStop:
@@ -502,7 +487,7 @@ export default class Matgo extends Vue {
   requestHandCards() {
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
-      command: RequestMessageCommand.handCards
+      command: RequestMessageCommand.handCards,
     } as RequestMessage);
   }
 
@@ -529,7 +514,7 @@ export default class Matgo extends Vue {
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: RequestMessageCommand.select,
-      value: [idx]
+      value: [idx],
     } as RequestMessage);
   }
 
@@ -557,17 +542,17 @@ export default class Matgo extends Vue {
       title: `${this.myStatus.goCount + 1}고하시겠습니까?<br/>점수: ${
         message.value[0]
       }<br/> 상금 : ${message.value[1]}`,
-      icon: "question",
-      confirmButtonText: "예",
-      cancelButtonText: "아니요",
+      icon: 'question',
+      confirmButtonText: '예',
+      cancelButtonText: '아니요',
       showCancelButton: true,
-      allowOutsideClick: false
+      allowOutsideClick: false,
     });
 
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: RequestMessageCommand.goStop,
-      value: [result.value ? GoStopCommand.go : GoStopCommand.stop]
+      value: [result.value ? GoStopCommand.go : GoStopCommand.stop],
     });
   }
 
@@ -578,48 +563,48 @@ export default class Matgo extends Vue {
     console.log(message.value);
     await this.$swal({
       title: `났습니다.<br/>점수: ${message.value[0]}<br/> 상금 : ${message.value[1]}`,
-      icon: "success",
-      confirmButtonText: "예",
-      allowOutsideClick: false
+      icon: 'success',
+      confirmButtonText: '예',
+      allowOutsideClick: false,
     });
   }
 
   async chongTongModal(message: ResponseMessage) {
     console.log(message);
     const result = await this.$swal({
-      title: "총통?",
-      icon: "success",
-      confirmButtonText: "OK",
-      cancelButtonText: "아니요",
+      title: '총통?',
+      icon: 'success',
+      confirmButtonText: 'OK',
+      cancelButtonText: '아니요',
       showCancelButton: true,
-      allowOutsideClick: false
+      allowOutsideClick: false,
     });
     console.log(result);
   }
 
   async selectKookjin() {
     const result = await this.$swal({
-      title: "국진을 쌍피로 쓰시겠습니까?",
-      icon: "question",
-      confirmButtonText: "예",
-      cancelButtonText: "아니요",
+      title: '국진을 쌍피로 쓰시겠습니까?',
+      icon: 'question',
+      confirmButtonText: '예',
+      cancelButtonText: '아니요',
       showCancelButton: true,
-      allowOutsideClick: false
+      allowOutsideClick: false,
     });
 
     this.sendMessage(MessageType.play, {
       sessionId: this.sessionId,
       command: RequestMessageCommand.kookjin,
-      value: [result.value ? 1 : 0]
+      value: [result.value ? 1 : 0],
     });
   }
 
-  toast(message: string, type = "is-warning") {
+  toast(message: string, type = 'is-warning') {
     this.$buefy.snackbar.open({
       duration: 500,
       message: message,
       type,
-      position: "is-bottom"
+      position: 'is-bottom',
     });
   }
 
@@ -634,7 +619,7 @@ export default class Matgo extends Vue {
    */
   playStart() {
     this.sendMessage(MessageType.end, {
-      command: RequestMessageCommand.playStart
+      command: RequestMessageCommand.playStart,
     } as RequestMessage);
   }
 
@@ -644,7 +629,7 @@ export default class Matgo extends Vue {
    */
   playLeave() {
     this.sendMessage(MessageType.end, {
-      command: RequestMessageCommand.playLeave
+      command: RequestMessageCommand.playLeave,
     } as RequestMessage);
   }
 }

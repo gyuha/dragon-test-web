@@ -21,9 +21,9 @@ import { Vue, Component } from 'vue-property-decorator';
   },
   components: {},
 })
-export default class MatgoCards extends Vue {
+export default class HoldemCards extends Vue {
   imgPath(image: string) {
-    return '/img/cards/' + image + '.png';
+    return '/img/pokers/' + image + '.png';
   }
 
   selectCard(num: number) {
@@ -34,10 +34,10 @@ export default class MatgoCards extends Vue {
 
 <style lang="scss">
 .card-group {
-  min-height: 50px;
+  min-height: 120px;
 }
 .matgoCard {
-  width: 40px;
+  width: 100px;
   margin: 2px;
 }
 </style>

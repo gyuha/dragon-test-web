@@ -5,10 +5,10 @@
 // GENERATED USING @colyseus/schema 0.5.39
 // 
 
-import { Schema, type, ArraySchema, MapSchema, DataChange } from "@colyseus/schema";
-import { Player } from "./Player"
-import { HoldemCard } from "./HoldemCard"
-import { Board } from "./Board"
+import { ArraySchema, MapSchema, Schema, type } from "@colyseus/schema";
+import { Board } from "./Board";
+import { HoldemCard } from "./HoldemCard";
+import { Player } from "./Player";
 
 export class HoldemState extends Schema {
     @type("string") public roomState: string;

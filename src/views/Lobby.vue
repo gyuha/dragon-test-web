@@ -1,12 +1,7 @@
 <template>
   <div class="lobby">
     <h1>무명 맞고</h1>
-    <b-carousel-list
-      v-model="page"
-      :data="matgoRooms"
-      :arrow-hover="false"
-      :items-to-show="6"
-    >
+    <b-carousel-list v-model="page" :data="matgoRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
         <router-link :to="'/matgo/' + props.list.id">
           <div class="thecard">
@@ -14,9 +9,7 @@
               <img :src="'/img/cards/' + props.list.icon + '.png'" />
             </div>
             <div class="card-caption">
-              <span class="date">
-                {{ props.list.name }} / {{ props.list.grade }}</span
-              >
+              <span class="date"> {{ props.list.name }} / {{ props.list.grade }}</span>
               <h2>점 {{ props.list.point }}</h2>
               <p>최소금액 : {{ props.list.money }}</p>
             </div>
@@ -29,12 +22,7 @@
       </template>
     </b-carousel-list>
     <h1>텍사스 홀덤</h1>
-    <b-carousel-list
-      v-model="page"
-      :data="holdemRooms"
-      :arrow-hover="false"
-      :items-to-show="6"
-    >
+    <b-carousel-list v-model="page" :data="holdemRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
         <router-link :to="'/holdem/' + props.list.id">
           <div class="thecard">
@@ -42,9 +30,7 @@
               <img :src="'/img/pokers/' + props.list.icon + '.png'" />
             </div>
             <div class="card-caption">
-              <span class="date">
-                {{ props.list.name }} / {{ props.list.grade }}</span
-              >
+              <span class="date"> {{ props.list.name }} / {{ props.list.grade }}</span>
               <h2>점 {{ props.list.point }}</h2>
               <p>최소금액 : {{ props.list.money }}</p>
             </div>
@@ -60,8 +46,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import Axios from "axios";
+import { Vue, Component } from 'vue-property-decorator';
+import Axios from 'axios';
 
 interface MatgoRooms {
   id: string;
@@ -85,7 +71,7 @@ interface HoldemRooms {
 
 @Component({
   props: {},
-  components: {}
+  components: {},
 })
 export default class Lobby extends Vue {
   matgoRooms: MatgoRooms[] = [];
@@ -102,7 +88,7 @@ export default class Lobby extends Vue {
     console.log(res);
     this.matgoRooms = [];
     for (const key in res.data) {
-      console.log("Lobby -> loadLobby -> room", res.data[key]);
+      console.log('Lobby -> loadLobby -> room', res.data[key]);
       res.data[key].id = key;
       this.matgoRooms.push(res.data[key]);
     }
@@ -114,7 +100,7 @@ export default class Lobby extends Vue {
     console.log(res);
     this.holdemRooms = [];
     for (const key in res.data) {
-      console.log("Lobby -> loadLobby -> room", res.data[key]);
+      console.log('Lobby -> loadLobby -> room', res.data[key]);
       res.data[key].id = key;
       this.holdemRooms.push(res.data[key]);
     }
@@ -153,9 +139,6 @@ export default class Lobby extends Vue {
     box-shadow: 0 1px 30px rgba(0, 0, 0, 0.4);
     display: block;
     transition: 400ms ease;
-  }
-
-  .card-img {
   }
 
   .card-img img {
