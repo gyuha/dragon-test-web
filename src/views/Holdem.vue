@@ -1,20 +1,14 @@
 <template>
-<div>
-</div>
+  <div></div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from "vue-property-decorator";
 @Component({
   props: {},
   components: {},
 })
-export default class Holdem extends Vue {
-
-}
+export default class Holdem extends Vue {}
 </script>
 
-<style lang="scss">
-
-</style>
-
+<style lang="scss"></style>

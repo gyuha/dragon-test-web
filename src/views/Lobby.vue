@@ -1,12 +1,45 @@
 <template>
   <div class="lobby">
     <h1>무명 맞고</h1>
-    <b-carousel-list v-model="page" :data="items" :arrow-hover="false">
+    <b-carousel-list
+      v-model="page"
+      :data="matgoRooms"
+      :arrow-hover="false"
+      :items-to-show="6"
+    >
       <template slot="item" slot-scope="props">
         <router-link :to="'/matgo/' + props.list.id">
           <div class="thecard">
             <div class="card-img">
               <img :src="'/img/cards/' + props.list.icon + '.png'" />
+            </div>
+            <div class="card-caption">
+              <span class="date">
+                {{ props.list.name }} / {{ props.list.grade }}</span
+              >
+              <h2>점 {{ props.list.point }}</h2>
+              <p>최소금액 : {{ props.list.money }}</p>
+            </div>
+            <div class="card-outmore">
+              <h5>Play</h5>
+              <b-icon icon="play" size="is-small"> </b-icon>
+            </div>
+          </div>
+        </router-link>
+      </template>
+    </b-carousel-list>
+    <h1>텍사스 홀덤</h1>
+    <b-carousel-list
+      v-model="page"
+      :data="holdemRooms"
+      :arrow-hover="false"
+      :items-to-show="6"
+    >
+      <template slot="item" slot-scope="props">
+        <router-link :to="'/holdem/' + props.list.id">
+          <div class="thecard">
+            <div class="card-img">
+              <img :src="'/img/pokers/' + props.list.icon + '.png'" />
             </div>
             <div class="card-caption">
               <span class="date">
@@ -30,7 +63,17 @@
 import { Vue, Component } from "vue-property-decorator";
 import Axios from "axios";
 
-interface LoobyData {
+interface MatgoRooms {
+  id: string;
+  level: number;
+  name: string;
+  grade: string;
+  icon: string;
+  point: number;
+  money: number;
+}
+
+interface HoldemRooms {
   id: string;
   level: number;
   name: string;
@@ -45,21 +88,35 @@ interface LoobyData {
   components: {}
 })
 export default class Lobby extends Vue {
-  items: LoobyData[] = [];
+  matgoRooms: MatgoRooms[] = [];
+  holdemRooms: HoldemRooms[] = [];
   page = 0;
   mounted() {
-    this.loadLobby();
+    this.matgoLobby();
+    this.holdemLobby();
   }
 
-  async loadLobby() {
-    const url = `//${process.env.VUE_APP_SERVER_HOST}/api/lobby/rooms`;
+  async matgoLobby() {
+    const url = `//${process.env.VUE_APP_SERVER_HOST}/api/matgo/rooms`;
     const res = await Axios.get(url);
     console.log(res);
-    this.items = [];
+    this.matgoRooms = [];
     for (const key in res.data) {
       console.log("Lobby -> loadLobby -> room", res.data[key]);
       res.data[key].id = key;
-      this.items.push(res.data[key]);
+      this.matgoRooms.push(res.data[key]);
+    }
+  }
+
+  async holdemLobby() {
+    const url = `//${process.env.VUE_APP_SERVER_HOST}/api/holdem/rooms`;
+    const res = await Axios.get(url);
+    console.log(res);
+    this.holdemRooms = [];
+    for (const key in res.data) {
+      console.log("Lobby -> loadLobby -> room", res.data[key]);
+      res.data[key].id = key;
+      this.holdemRooms.push(res.data[key]);
     }
   }
 }

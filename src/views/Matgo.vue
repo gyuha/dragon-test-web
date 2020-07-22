@@ -126,9 +126,9 @@ import * as Colyseus from "colyseus.js";
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSONView } from "vue-json-component";
-import GameState from "@/components/GameState.vue";
+import GameState from "@/components/matgo/GameState.vue";
 import _ from "lodash";
-import MatgoCards from "@/components/MatgoCards.vue";
+import MatgoCards from "@/components/matgo/MatgoCards.vue";
 import { MatgoCard, CardType } from "../matgoSchema/MatgoCard";
 import { Player } from "@/matgoSchema/Player";
 import {
@@ -140,8 +140,8 @@ import {
 } from "@/matgoSchema/MatgoType";
 import { ResponseMessage } from "../matgoSchema/ResponseMessage";
 import { RequestMessage } from "@/matgoSchema/RequestMessage";
-import PlayCards from "@/components/PlayCards.vue";
-import PlayerStatus from "@/components/PlayerStatus.vue";
+import PlayCards from "@/components/matgo/PlayCards.vue";
+import PlayerStatus from "@/components/matgo/PlayerStatus.vue";
 import Axios from "axios";
 
 @Component({
