@@ -5,6 +5,8 @@
 // GENERATED USING @colyseus/schema 0.5.39
 // 
 
+import { RequestMessageCommand } from './RequestMessageCommand';
+
 export interface RequestMessage {
     sessionId: string;
     command: RequestMessageCommand;

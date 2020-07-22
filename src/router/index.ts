@@ -10,20 +10,20 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Lobby",
-    component: Lobby,
+    component: Lobby
   },
   {
     path: "/matgo/:id",
     name: "Matgo",
     component: Matgo,
-    props: true,
+    props: true
   },
   {
     path: "/holdem/:id",
     name: "Holdem",
     component: Holdem,
-    props: true,
-  },
+    props: true
+  }
 ];
 
 const router = new VueRouter({

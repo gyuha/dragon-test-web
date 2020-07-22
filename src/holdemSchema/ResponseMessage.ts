@@ -5,6 +5,9 @@
 // GENERATED USING @colyseus/schema 0.5.39
 // 
 
+import { HoldemCard } from './HoldemCard';
+import { ResponseMessageCommand } from './ResponseMessageCommand';
+
 export interface ResponseMessage {
     sessionId: string;
     command: ResponseMessageCommand;
