@@ -1,12 +1,6 @@
 <template>
   <div class="card-group">
-    <img
-      class="matgoCard"
-      v-for="(card, idx) in cards"
-      :key="idx"
-      :src="imgPath(card.image)"
-      @click="selectCard(idx)"
-    />
+    <img class="matgoCard" v-for="(card, idx) in cards" :key="idx" :src="imgPath(card.image)" />
   </div>
 </template>
 
@@ -24,10 +18,6 @@ import { Vue, Component } from 'vue-property-decorator';
 export default class HoldemCards extends Vue {
   imgPath(image: string) {
     return '/img/pokers/' + image + '.png';
-  }
-
-  selectCard(num: number) {
-    this.$emit('select', num);
   }
 }
 </script>

@@ -1,10 +1,11 @@
 <template>
   <div>
-    <HoldemState value="0"></HoldemState>
+    <HoldemState :value="gameState"></HoldemState>
+    {{ gameState }}
     <h1>Community Cards</h1>
     <HoldemCards :cards="[]"></HoldemCards>
     <hr />
-    <json-view :data="stateData" />
+    <json-view :data="stateData" :maxDepth="3" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -18,6 +19,7 @@ import Axios from 'axios';
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSONView } from 'vue-json-component';
+import _ from 'lodash';
 
 @Component({
   props: {
@@ -34,7 +36,7 @@ export default class Holdem extends Vue {
   room: Colyseus.Room | null = null;
   messageType = '';
   stateData = {
-    state: 0,
+    holdemTurnState: 0,
   };
   roomInfo = {};
 
@@ -52,12 +54,12 @@ export default class Holdem extends Vue {
     this.roomInfoLoad();
   }
 
-  onMount() {
+  mounted() {
     this.joinRoom();
   }
 
   async roomInfoLoad() {
-    const host = `//${process.env.VUE_APP_SERVER_HOST}`;
+    const host = `//${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
     const res = await Axios.get(`${host}/api/holdem/room/${this.$props.id}`);
     this.roomInfo = res.data;
   }
@@ -71,16 +73,17 @@ export default class Holdem extends Vue {
   }
 
   get gameState() {
-    return this.stateData.state;
+    return this.stateData.holdemTurnState;
   }
 
   /**
    * 방 접속 하기
    */
   async joinRoom() {
-    const host = `ws://${process.env.VUE_APP_SERVER_HOST}`;
+    const host = `ws://${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
     console.log(host);
     this.client = new Colyseus.Client(host);
+    console.log(this.$props.id);
     this.client
       .joinOrCreate(this.$props.id)
       .then((room: Colyseus.Room) => {
@@ -100,7 +103,7 @@ export default class Holdem extends Vue {
     }
     this.room.onStateChange((state: any) => {
       console.log(state);
-      // this.stateData = _.clone(state);
+      this.stateData = _.clone(state);
       // if (this.gameState === 'play') {
       //   this.playCardsDisplay(state);
       // }

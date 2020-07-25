@@ -104,7 +104,7 @@
       </form>
     </b-modal>
     <hr />
-    <json-view :data="stateData" />
+    <json-view :data="stateData" :maxDepth="3" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -190,7 +190,7 @@ export default class Matgo extends Vue {
   }
 
   async roomInfoLoad() {
-    const host = `//${process.env.VUE_APP_SERVER_HOST}`;
+    const host = `//${process.env.VUE_APP_MATGO_SERVER_HOST}`;
     const res = await Axios.get(`${host}/api/matgo/room/${this.$props.id}`);
     this.roomInfo = res.data;
   }
@@ -250,7 +250,7 @@ export default class Matgo extends Vue {
    * 방 접속 하기
    */
   joinRoom() {
-    const host = `ws://${process.env.VUE_APP_SERVER_HOST}`;
+    const host = `ws://${process.env.VUE_APP_MATGO_SERVER_HOST}`;
     console.log(host);
     this.client = new Colyseus.Client(host);
     this.client

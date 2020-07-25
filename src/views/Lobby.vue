@@ -83,7 +83,8 @@ export default class Lobby extends Vue {
   }
 
   async matgoLobby() {
-    const url = `//${process.env.VUE_APP_SERVER_HOST}/api/matgo/rooms`;
+    console.log(process.env.VUE_APP_MATGO_SERVER_HOST);
+    const url = `//${process.env.VUE_APP_MATGO_SERVER_HOST}/api/matgo/rooms`;
     const res = await Axios.get(url);
     console.log(res);
     this.matgoRooms = [];
@@ -95,7 +96,7 @@ export default class Lobby extends Vue {
   }
 
   async holdemLobby() {
-    const url = `//${process.env.VUE_APP_SERVER_HOST}/api/holdem/rooms`;
+    const url = `//${process.env.VUE_APP_HOLDEM_SERVER_HOST}/api/holdem/rooms`;
     const res = await Axios.get(url);
     console.log(res);
     this.holdemRooms = [];
