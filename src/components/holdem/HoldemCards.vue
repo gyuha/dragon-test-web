@@ -5,19 +5,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator';
 @Component({
-  props: {
-    cards: {
-      type: Array,
-      default: [],
-    },
-  },
   components: {},
 })
 export default class HoldemCards extends Vue {
+  @Prop(Array)
+  cards: string[];
+
   imgPath(image: string) {
     return '/img/pokers/' + image + '.png';
+  }
+
+  @Watch('update')
+  updateData() {
+    this.$forceUpdate();
   }
 }
 </script>

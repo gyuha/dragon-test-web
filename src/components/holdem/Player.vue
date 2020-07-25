@@ -10,7 +10,8 @@
       {{ player.name }}
     </div>
     <div class="player-box">
-      <HoldemCards :cards="cards"></HoldemCards>
+      <HoldemCards v-if="me" :update="update" :cards="myCards"></HoldemCards>
+      <HoldemCards v-else :update="update" :cards="player.comfirmCards"></HoldemCards>
     </div>
     <div class="player-box">
       <div class="buttons">
@@ -93,15 +94,8 @@ export default class Player extends Vue {
     return '';
   }
 
-  get cards(): string[] {
-    if (this.player.sessionId === this.sessionId) {
-      if (this.myCards.length > 0) {
-        return this.myCards;
-      } else {
-        return this.player.comfirmCards;
-      }
-    }
-    return this.player.comfirmCards;
+  get me() {
+    return this.player.sessionId === this.sessionId;
   }
 
   @Watch('update')

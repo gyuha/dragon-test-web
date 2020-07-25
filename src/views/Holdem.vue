@@ -3,19 +3,19 @@
     <HoldemState :value="gameState"></HoldemState>
     <div class="card">
       <h1>Community Cards</h1>
-      <HoldemCards :cards="stateData.boardCards"></HoldemCards>
+      <HoldemCards :update="updateDt" :cards="stateData.boardCards"></HoldemCards>
     </div>
     <div v-for="(player, idx) in players" :key="idx">
       <Player
         :sessionId="sessionId"
         :myCards="myCards"
         :currentPosition="stateData.currentPosition"
-        :update="player.updateDt"
+        :update="updateDt"
         :player="player"
       ></Player>
     </div>
     <hr />
-    <json-view :data="stateData" :maxDepth="3" />
+    <json-view :data="stateData" :maxDepth="1" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -58,6 +58,7 @@ export default class Holdem extends Vue {
   roomInfo = {};
   myCards: string[] = [];
   players = [];
+  updateDt = 0;
 
   constructor() {
     super();
@@ -119,9 +120,7 @@ export default class Holdem extends Vue {
     this.room.onStateChange((state: any) => {
       this.stateData = { ...state };
       this.players = this.stateData.players;
-      this.players.forEach((player: any) => {
-        player.updateDt = +new Date();
-      });
+      this.updateDt = +new Date().getTime();
       this.$forceUpdate();
     });
 
