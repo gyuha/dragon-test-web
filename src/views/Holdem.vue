@@ -6,7 +6,7 @@
       <HoldemCards :cards="stateData.boardCards"></HoldemCards>
     </div>
     <div v-for="(player, idx) in players" :key="idx">
-      <Player :sessionId="player.sessionId" :player="player"></Player>
+      <Player :update="player.updateDt" :player="player"></Player>
     </div>
     <hr />
     <json-view :data="stateData" :maxDepth="3" />
@@ -24,7 +24,6 @@ import Axios from 'axios';
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSONView } from 'vue-json-component';
-import _ from 'lodash';
 import { MessageType } from '@/holdemSchema/MessageType';
 import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
 import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
@@ -113,6 +112,9 @@ export default class Holdem extends Vue {
     this.room.onStateChange((state: any) => {
       this.stateData = { ...state };
       this.players = this.stateData.players;
+      this.players.forEach((player: any) => {
+        player.updateDt = +new Date();
+      });
       this.$forceUpdate();
     });
 

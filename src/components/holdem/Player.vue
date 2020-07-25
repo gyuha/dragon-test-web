@@ -10,12 +10,13 @@
     </div>
     <div class="player-box">
       <div class="buttons">
-        <b-button type="is-primary">다이</b-button>
-        <b-button type="is-success">체크</b-button>
-        <b-button type="is-link">삥</b-button>
-        <b-button type="is-info">따당</b-button>
-        <b-button type="is-warning">하프</b-button>
-        <b-button type="is-danger">올인</b-button>
+        <b-button :disabled="buttonEnable(0)" type="is-primary">다이</b-button>
+        <b-button :disabled="buttonEnable(1)" type="is-success">체크</b-button>
+        <b-button :disabled="buttonEnable(2)" type="is-success">삥</b-button>
+        <b-button :disabled="buttonEnable(3)" type="is-info">콜</b-button>
+        <b-button :disabled="buttonEnable(4)" type="is-info">따당</b-button>
+        <b-button :disabled="buttonEnable(5)" type="is-warning">하프</b-button>
+        <b-button :disabled="buttonEnable(6)" type="is-danger">올인</b-button>
       </div>
       <b-field grouped group-multiline>
         <div class="control">
@@ -60,8 +61,8 @@ export default class Player extends Vue {
   @Prop(Object)
   player: any;
 
-  @Prop(String)
-  sessionId: string;
+  @Prop(Number)
+  update: number;
 
   printPlayState(): string {
     switch (this.$props.player.playState) {
@@ -73,13 +74,19 @@ export default class Player extends Vue {
         return 'S.B';
       case 3:
         return 'B.B';
+      case 4:
+        return 'Play';
     }
     return '';
   }
 
-  @Watch('sessionId')
+  @Watch('update')
   updateData() {
     this.$forceUpdate();
+  }
+
+  buttonEnable(num: number) {
+    return !this.player.buttons[num];
   }
 }
 </script>
