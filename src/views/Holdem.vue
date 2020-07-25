@@ -6,7 +6,11 @@
       <HoldemCards :cards="stateData.boardCards"></HoldemCards>
     </div>
     <div v-for="(player, idx) in players" :key="idx">
-      <Player :update="player.updateDt" :player="player"></Player>
+      <Player
+        :currentPosition="stateData.currentPosition"
+        :update="player.updateDt"
+        :player="player"
+      ></Player>
     </div>
     <hr />
     <json-view :data="stateData" :maxDepth="3" />
@@ -47,6 +51,7 @@ export default class Holdem extends Vue {
     turnState: 0,
     boardCards: [],
     players: [],
+    currentPosition: 0,
   };
   roomInfo = {};
   myCards: string[] = [];

@@ -1,5 +1,5 @@
 <template>
-  <div class="player-box-container">
+  <div class="player-box-container" :class="{'player-box-container-enable': currentPlayer() }">
     <div class="player-box no-box">{{ player.positionNumber + 1 }}.</div>
     <div class="player-box avatar-box">
       <img class="avatar" :src="player.avatar" />
@@ -62,6 +62,9 @@ export default class Player extends Vue {
   player: any;
 
   @Prop(Number)
+  currentPosition: number;
+
+  @Prop(Number)
   update: number;
 
   printPlayState(): string {
@@ -88,6 +91,10 @@ export default class Player extends Vue {
   buttonEnable(num: number) {
     return !this.player.buttons[num];
   }
+
+  currentPlayer() {
+    return this.player.positionNumber === this.currentPosition;
+  }
 }
 </script>
 
@@ -97,7 +104,10 @@ export default class Player extends Vue {
   flex-direction: row;
   flex-wrap: nowrap;
   border-bottom: 2px solid #ddd;
-  margin: 20px;
+  padding:15px;
+  &-enable {
+    background-color: #CDFFD5;
+  }
 }
 
 .player-box {
