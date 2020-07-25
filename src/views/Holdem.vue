@@ -7,6 +7,8 @@
     </div>
     <div v-for="(player, idx) in players" :key="idx">
       <Player
+        :sessionId="sessionId"
+        :myCards="myCards"
         :currentPosition="stateData.currentPosition"
         :update="player.updateDt"
         :player="player"

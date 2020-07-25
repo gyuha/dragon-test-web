@@ -1,12 +1,16 @@
 <template>
-  <div class="player-box-container" :class="{'player-box-container-enable': currentPlayer() }">
+  <div class="player-box-container" :class="{ 'player-box-container-enable': currentPlayer() }">
     <div class="player-box no-box">{{ player.positionNumber + 1 }}.</div>
     <div class="player-box avatar-box">
-      <img class="avatar" :src="player.avatar" />
+      <img
+        class="avatar"
+        :src="player.avatar"
+        :class="{ 'avatar-enable': sessionId === player.sessionId }"
+      />
       {{ player.name }}
     </div>
     <div class="player-box">
-      <HoldemCards :cards="player.comfirmCards"></HoldemCards>
+      <HoldemCards :cards="cards"></HoldemCards>
     </div>
     <div class="player-box">
       <div class="buttons">
@@ -67,6 +71,12 @@ export default class Player extends Vue {
   @Prop(Number)
   update: number;
 
+  @Prop(Array)
+  myCards: string[];
+
+  @Prop(String)
+  sessionId: string;
+
   printPlayState(): string {
     switch (this.$props.player.playState) {
       case 0:
@@ -81,6 +91,17 @@ export default class Player extends Vue {
         return 'Play';
     }
     return '';
+  }
+
+  get cards(): string[] {
+    if (this.player.sessionId === this.sessionId) {
+      if (this.myCards.length > 0) {
+        return this.myCards;
+      } else {
+        return this.player.comfirmCards;
+      }
+    }
+    return this.player.comfirmCards;
   }
 
   @Watch('update')
@@ -104,9 +125,9 @@ export default class Player extends Vue {
   flex-direction: row;
   flex-wrap: nowrap;
   border-bottom: 2px solid #ddd;
-  padding:15px;
+  padding: 15px;
   &-enable {
-    background-color: #CDFFD5;
+    background-color: #cdffd5;
   }
 }
 
@@ -118,11 +139,14 @@ export default class Player extends Vue {
   text-align: center;
 
   .avatar {
-    padding-left: 5px;
     margin: 5px;
     display: block;
     width: 90px;
     border-radius: 50%;
+
+    &-enable {
+      border: 8px solid red;
+    }
   }
 }
 .no-box {
