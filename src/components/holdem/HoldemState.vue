@@ -5,19 +5,18 @@
         <b-step-item :key="index" :label="step"></b-step-item>
       </template>
     </b-steps>
-    {{ value }}
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 @Component({
-  props: {
-    value: String,
-  },
   components: {},
 })
 export default class HoldemState extends Vue {
+  @Prop(Number)
+  value: number;
+
   stateValues = [
     'Ready',
     'PreFlop',

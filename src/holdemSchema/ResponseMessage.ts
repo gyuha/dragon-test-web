@@ -5,7 +5,6 @@
 // GENERATED USING @colyseus/schema 0.5.39
 // 
 
-import { HoldemCard } from './HoldemCard';
 import { ResponseMessageCommand } from './ResponseMessageCommand';
 
 export interface ResponseMessage {
@@ -13,6 +12,6 @@ export interface ResponseMessage {
     command: ResponseMessageCommand;
     value: number[];
     message: string;
-    cards: HoldemCard[];
+    cards: string[];
     nextSessionId: string;
 }

@@ -1,9 +1,13 @@
 <template>
   <div>
     <HoldemState :value="gameState"></HoldemState>
-    {{ gameState }}
-    <h1>Community Cards</h1>
-    <HoldemCards :cards="[]"></HoldemCards>
+    <div class="card">
+      <h1>Community Cards</h1>
+      <HoldemCards :cards="stateData.boardCards"></HoldemCards>
+    </div>
+    <div v-for="(player, idx) in players" :key="idx">
+      <Player :sessionId="player.sessionId" :player="player"></Player>
+    </div>
     <hr />
     <json-view :data="stateData" :maxDepth="3" />
     {{ id }} : {{ roomInfo }}
@@ -14,12 +18,16 @@
 import { Vue, Component } from 'vue-property-decorator';
 import HoldemState from '@/components/holdem/HoldemState.vue';
 import HoldemCards from '@/components/holdem/HoldemCards.vue';
+import Player from '@/components/holdem/Player.vue';
 import * as Colyseus from 'colyseus.js';
 import Axios from 'axios';
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSONView } from 'vue-json-component';
 import _ from 'lodash';
+import { MessageType } from '@/holdemSchema/MessageType';
+import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
+import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
 
 @Component({
   props: {
@@ -28,6 +36,7 @@ import _ from 'lodash';
   components: {
     HoldemState,
     HoldemCards,
+    Player,
     'json-view': JSONView,
   },
 })
@@ -36,9 +45,13 @@ export default class Holdem extends Vue {
   room: Colyseus.Room | null = null;
   messageType = '';
   stateData = {
-    holdemTurnState: 0,
+    turnState: 0,
+    boardCards: [],
+    players: [],
   };
   roomInfo = {};
+  myCards: string[] = [];
+  players = [];
 
   constructor() {
     super();
@@ -73,7 +86,7 @@ export default class Holdem extends Vue {
   }
 
   get gameState() {
-    return this.stateData.holdemTurnState;
+    return this.stateData.turnState;
   }
 
   /**
@@ -81,15 +94,11 @@ export default class Holdem extends Vue {
    */
   async joinRoom() {
     const host = `ws://${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
-    console.log(host);
     this.client = new Colyseus.Client(host);
-    console.log(this.$props.id);
     this.client
       .joinOrCreate(this.$props.id)
       .then((room: Colyseus.Room) => {
-        console.log(room);
         this.room = room;
-        // console.log('Home -> joinRoom -> this.room', this.room.state);
         this.eventRegister();
       })
       .catch((e: unknown) => {
@@ -102,13 +111,24 @@ export default class Holdem extends Vue {
       return;
     }
     this.room.onStateChange((state: any) => {
-      console.log(state);
-      this.stateData = _.clone(state);
-      // if (this.gameState === 'play') {
-      //   this.playCardsDisplay(state);
-      // }
+      this.stateData = { ...state };
+      this.players = this.stateData.players;
       this.$forceUpdate();
     });
+
+    this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
+      this.messageType = 'play';
+      this.onPlayMessage(message);
+    });
+  }
+
+  onPlayMessage(message: ResponseMessage) {
+    console.log(message);
+    switch (message.command) {
+      case ResponseMessageCommand.take:
+        this.myCards = message.cards;
+        break;
+    }
   }
 }
 </script>

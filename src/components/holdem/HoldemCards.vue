@@ -1,6 +1,6 @@
 <template>
   <div class="card-group">
-    <img class="matgoCard" v-for="(card, idx) in cards" :key="idx" :src="imgPath(card.image)" />
+    <img class="matgoCard" v-for="(card, idx) in cards" :key="idx" :src="imgPath(card)" />
   </div>
 </template>
 
@@ -24,10 +24,10 @@ export default class HoldemCards extends Vue {
 
 <style lang="scss">
 .card-group {
-  min-height: 120px;
+  min-height: 80px;
 }
 .matgoCard {
-  width: 100px;
+  width: 60px;
   margin: 2px;
 }
 </style>
