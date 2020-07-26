@@ -4,6 +4,7 @@
     <div class="card">
       <h1>Community Cards</h1>
       <HoldemCards :update="updateDt" :cards="stateData.boardCards"></HoldemCards>
+      <h2> 배팅액 : {{ stateData.betAmount }}</h2>
     </div>
     <div v-for="(player, idx) in players" :key="idx">
       <Player
@@ -152,4 +153,9 @@ export default class Holdem extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+h2 { 
+  font-weight: 400;
+  font-size: 30px;
+}
+</style>

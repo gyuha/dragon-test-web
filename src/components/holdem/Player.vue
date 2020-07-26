@@ -17,25 +17,25 @@
     </div>
     <div class="player-box">
       <div class="buttons">
-        <b-button @click="sendPlayMessage(0)" :disabled="buttonEnable(0)" type="is-primary"
+        <b-button @click="sendPlayMessage(0)" :disabled="buttonDisable(0)" type="is-primary"
           >다이</b-button
         >
-        <b-button @click="sendPlayMessage(1)" :disabled="buttonEnable(1)" type="is-success"
+        <b-button @click="sendPlayMessage(1)" :disabled="buttonDisable(1)" type="is-success"
           >체크</b-button
         >
-        <b-button @click="sendPlayMessage(2)" :disabled="buttonEnable(2)" type="is-success"
+        <b-button @click="sendPlayMessage(2)" :disabled="buttonDisable(2)" type="is-success"
           >삥</b-button
         >
-        <b-button @click="sendPlayMessage(3)" :disabled="buttonEnable(3)" type="is-info"
+        <b-button @click="sendPlayMessage(3)" :disabled="buttonDisable(3)" type="is-info"
           >콜</b-button
         >
-        <b-button @click="sendPlayMessage(4)" :disabled="buttonEnable(4)" type="is-info"
+        <b-button @click="sendPlayMessage(4)" :disabled="buttonDisable(4)" type="is-info"
           >따당</b-button
         >
-        <b-button @click="sendPlayMessage(5)" :disabled="buttonEnable(5)" type="is-warning"
+        <b-button @click="sendPlayMessage(5)" :disabled="buttonDisable(5)" type="is-warning"
           >하프</b-button
         >
-        <b-button @click="sendPlayMessage(6)" :disabled="buttonEnable(6)" type="is-danger"
+        <b-button @click="sendPlayMessage(6)" :disabled="buttonDisable(6)" type="is-danger"
           >올인</b-button
         >
       </div>
@@ -72,7 +72,6 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import HoldemCards from './HoldemCards.vue';
-import { RequestMessageCommand } from '@/holdemSchema/RequestMessageCommand';
 
 @Component({
   components: {
@@ -120,12 +119,14 @@ export default class Player extends Vue {
     this.$forceUpdate();
   }
 
-  buttonEnable(num: number): boolean {
-    return false;
-    // if (this.player.position === this.currentPosition) {
-    //   return false;
+  buttonDisable(num: number): boolean {
+    if (!this.currentPlayer() || this.sessionId !== this.player.sessionId) {
+      return true;
+    }
+    // if (this.sessionId === this.player.sessionId) {
+    //   return true;
     // }
-    // return !this.player.buttons[num];
+    return !this.player.buttons[num];
   }
 
   currentPlayer() {
