@@ -4,7 +4,7 @@
     <div class="card">
       <h1>Community Cards</h1>
       <HoldemCards :update="updateDt" :cards="stateData.boardCards"></HoldemCards>
-      <h2> 배팅액 : {{ stateData.betAmount }}</h2>
+      <h2>배팅액 : {{ stateData.betAmount }}</h2>
     </div>
     <div v-for="(player, idx) in players" :key="idx">
       <Player
@@ -35,6 +35,7 @@ import { MessageType } from '@/holdemSchema/MessageType';
 import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
 import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
 import { RequestMessage } from '@/holdemSchema/RequestMessage';
+import { HoldemTurnState } from '@/holdemSchema/HoldemTypes';
 
 @Component({
   props: {
@@ -98,6 +99,25 @@ export default class Holdem extends Vue {
     return this.stateData.turnState;
   }
 
+  gameEnd() {
+    if (this.stateData.turnState !== HoldemTurnState.FINISHED) {
+      return;
+    }
+    for (let i = 0; i < this.stateData.players.length; i++) {
+      const player: any = this.stateData.players[i];
+      if (player.sessionId === this.sessionId) {
+        if (player.amount === 0) {
+          this.$swal('END');
+          this.beforeDestory();
+          setTimeout(() => {
+            this.$router.push('/');
+          }, 2000);
+          return;
+        }
+      }
+    }
+  }
+
   /**
    * 방 접속 하기
    */
@@ -123,6 +143,7 @@ export default class Holdem extends Vue {
       this.stateData = { ...state };
       this.players = this.stateData.players;
       this.updateDt = +new Date().getTime();
+      this.gameEnd();
       this.$forceUpdate();
     });
 
@@ -154,7 +175,7 @@ export default class Holdem extends Vue {
 </script>
 
 <style lang="scss">
-h2 { 
+h2 {
   font-weight: 400;
   font-size: 30px;
 }
