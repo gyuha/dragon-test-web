@@ -15,7 +15,9 @@
       ></Player>
     </div>
     <hr />
-    <json-view :data="stateData" :maxDepth="1" />
+    <json-viewer :value="stateData" :expand-depth="2" />
+    <vue-json-pretty :data="stateData" :deep="2" :showDoubleQuotes="false" showLength showLine>
+    </vue-json-pretty>
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -28,8 +30,7 @@ import Player from '@/components/holdem/Player.vue';
 import * as Colyseus from 'colyseus.js';
 import Axios from 'axios';
 // @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { JSONView } from 'vue-json-component';
+import VueJsonPretty from 'vue-json-pretty';
 import { MessageType } from '@/holdemSchema/MessageType';
 import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
 import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
@@ -42,7 +43,7 @@ import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
     HoldemState,
     HoldemCards,
     Player,
-    'json-view': JSONView,
+    VueJsonPretty,
   },
 })
 export default class Holdem extends Vue {
