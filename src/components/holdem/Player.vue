@@ -7,44 +7,60 @@
         :src="player.avatar"
         :class="{ 'avatar-enable': sessionId === player.sessionId }"
       />
+      <b-tag v-if="player.playState !== 0" type="is-info"> {{ printPlayState() }} </b-tag>
       {{ player.name }}
     </div>
     <div class="player-box">
       <HoldemCards v-if="me" :update="update" :cards="myCards"></HoldemCards>
       <HoldemCards v-else :update="update" :cards="player.comfirmCards"></HoldemCards>
+      <b-tag v-if="player.isDie" type="is-danger"> 다이 </b-tag>
     </div>
     <div class="player-box">
       <div class="buttons">
-        <b-button :disabled="buttonEnable(0)" type="is-primary">다이</b-button>
-        <b-button :disabled="buttonEnable(1)" type="is-success">체크</b-button>
-        <b-button :disabled="buttonEnable(2)" type="is-success">삥</b-button>
-        <b-button :disabled="buttonEnable(3)" type="is-info">콜</b-button>
-        <b-button :disabled="buttonEnable(4)" type="is-info">따당</b-button>
-        <b-button :disabled="buttonEnable(5)" type="is-warning">하프</b-button>
-        <b-button :disabled="buttonEnable(6)" type="is-danger">올인</b-button>
+        <b-button @click="sendPlayMessage(0)" :disabled="buttonEnable(0)" type="is-primary"
+          >다이</b-button
+        >
+        <b-button @click="sendPlayMessage(1)" :disabled="buttonEnable(1)" type="is-success"
+          >체크</b-button
+        >
+        <b-button @click="sendPlayMessage(2)" :disabled="buttonEnable(2)" type="is-success"
+          >삥</b-button
+        >
+        <b-button @click="sendPlayMessage(3)" :disabled="buttonEnable(3)" type="is-info"
+          >콜</b-button
+        >
+        <b-button @click="sendPlayMessage(4)" :disabled="buttonEnable(4)" type="is-info"
+          >따당</b-button
+        >
+        <b-button @click="sendPlayMessage(5)" :disabled="buttonEnable(5)" type="is-warning"
+          >하프</b-button
+        >
+        <b-button @click="sendPlayMessage(6)" :disabled="buttonEnable(6)" type="is-danger"
+          >올인</b-button
+        >
       </div>
       <b-field grouped group-multiline>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">playState</b-tag>
-            <b-tag type="is-info">{{ printPlayState() }}</b-tag>
+            <b-tag type="is-dark">소지금</b-tag>
+            <b-tag type="is-info">{{ player.amount }}</b-tag>
           </b-taglist>
         </div>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">chips</b-tag>
-            <b-tag type="is-info">{{ player.chips }}</b-tag>
+            <b-tag type="is-dark">현재턴 배팅액</b-tag>
+            <b-tag type="is-info">{{ player.currentTurnBetAmount }}</b-tag>
           </b-taglist>
         </div>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">chipsOut</b-tag>
-            <b-tag type="is-info">{{ player.chipsOut }}</b-tag>
+            <b-tag type="is-dark">판 배팅액</b-tag>
+            <b-tag type="is-info">{{ player.betAmount }}</b-tag>
           </b-taglist>
         </div>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">나가기 예약</b-tag>
+            <b-tag type="is-dark">나가기</b-tag>
             <b-tag type="is-info">{{ player.existReserve ? 'Yes' : 'No' }}</b-tag>
           </b-taglist>
         </div>
@@ -56,6 +72,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import HoldemCards from './HoldemCards.vue';
+import { RequestMessageCommand } from '@/holdemSchema/RequestMessageCommand';
 
 @Component({
   components: {
@@ -103,12 +120,24 @@ export default class Player extends Vue {
     this.$forceUpdate();
   }
 
-  buttonEnable(num: number) {
-    return !this.player.buttons[num];
+  buttonEnable(num: number): boolean {
+    return false;
+    // if (this.player.position === this.currentPosition) {
+    //   return false;
+    // }
+    // return !this.player.buttons[num];
   }
 
   currentPlayer() {
     return this.player.positionNumber === this.currentPosition;
+  }
+
+  sendPlayMessage(command: number) {
+    console.log('Player -> sendPlayMessage -> command', command);
+    this.$emit('playMessage', {
+      sessionId: this.sessionId,
+      command,
+    });
   }
 }
 </script>

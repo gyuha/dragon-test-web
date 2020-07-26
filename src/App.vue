@@ -26,8 +26,11 @@
   }
 }
 
-.vjs-tree {
+.json-view-item {
+  background-color: #e2e3e4;
+  border-radius: 5px;
   text-align: left;
-  font-size: 12px !important;
+  font-weight: 200;
+  font-size: 12px;
 }
 </style>

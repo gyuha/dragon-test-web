@@ -104,7 +104,7 @@
       </form>
     </b-modal>
     <hr />
-    <vue-json-pretty :data="stateData" :deep="2" :showDoubleQuotes="false" showLength showLine> </vue-json-pretty>
+    <json-view :data="stateData" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -113,7 +113,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import * as Colyseus from 'colyseus.js';
 // @ts-ignore
-import VueJsonPretty from 'vue-json-pretty';
+import { JSONView } from 'vue-json-component';
 import GameState from '@/components/matgo/GameState.vue';
 import _ from 'lodash';
 import MatgoCards from '@/components/matgo/MatgoCards.vue';
@@ -141,7 +141,7 @@ import Axios from 'axios';
     MatgoCards,
     PlayCards,
     PlayerStatus,
-    VueJsonPretty,
+    'json-view': JSONView,
   },
 })
 export default class Matgo extends Vue {

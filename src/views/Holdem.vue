@@ -12,12 +12,11 @@
         :currentPosition="stateData.currentPosition"
         :update="updateDt"
         :player="player"
+        @playMessage="playMessage"
       ></Player>
     </div>
     <hr />
-    <json-viewer :value="stateData" :expand-depth="2" />
-    <vue-json-pretty :data="stateData" :deep="2" :showDoubleQuotes="false" showLength showLine>
-    </vue-json-pretty>
+    <json-view :data="stateData" />
     {{ id }} : {{ roomInfo }}
   </div>
 </template>
@@ -30,10 +29,11 @@ import Player from '@/components/holdem/Player.vue';
 import * as Colyseus from 'colyseus.js';
 import Axios from 'axios';
 // @ts-ignore
-import VueJsonPretty from 'vue-json-pretty';
+import { JSONView } from 'vue-json-component';
 import { MessageType } from '@/holdemSchema/MessageType';
 import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
 import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
+import { RequestMessage } from '@/holdemSchema/RequestMessage';
 
 @Component({
   props: {
@@ -43,7 +43,7 @@ import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
     HoldemState,
     HoldemCards,
     Player,
-    VueJsonPretty,
+    'json-view': JSONView,
   },
 })
 export default class Holdem extends Vue {
@@ -132,12 +132,22 @@ export default class Holdem extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
-    console.log(message);
     switch (message.command) {
       case ResponseMessageCommand.take:
         this.myCards = message.cards;
         break;
     }
+  }
+
+  sendMessage(type: MessageType, message: RequestMessage) {
+    if (this.room) {
+      this.room.send(type, message);
+    }
+  }
+
+  playMessage(message: RequestMessage) {
+    console.log(message);
+    this.sendMessage(MessageType.play, message);
   }
 }
 </script>
