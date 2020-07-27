@@ -10,9 +10,11 @@
       <Player
         :sessionId="sessionId"
         :myCards="myCards"
+        :myRank="myRank"
         :currentPosition="stateData.currentPosition"
         :update="updateDt"
         :player="player"
+        :gameState="gameState"
         @playMessage="playMessage"
       ></Player>
     </div>
@@ -60,6 +62,7 @@ export default class Holdem extends Vue {
   };
   roomInfo = {};
   myCards: string[] = [];
+  myRank = 0;
   players = [];
   updateDt = 0;
 
@@ -157,6 +160,9 @@ export default class Holdem extends Vue {
     switch (message.command) {
       case ResponseMessageCommand.take:
         this.myCards = message.cards;
+        break;
+      case ResponseMessageCommand.result:
+        this.myRank = message.value[0];
         break;
     }
   }

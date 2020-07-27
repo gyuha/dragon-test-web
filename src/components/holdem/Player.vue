@@ -7,13 +7,20 @@
         :src="player.avatar"
         :class="{ 'avatar-enable': sessionId === player.sessionId }"
       />
-      <b-tag v-if="player.playState !== 0" type="is-info"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 1" type="is-normal"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 2" type="is-danger"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 3" type="is-danger"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 4" type="is-info"> {{ printPlayState() }} </b-tag>
       {{ player.name }}
     </div>
     <div class="player-box">
       <HoldemCards v-if="me" :update="update" :cards="myCards"></HoldemCards>
       <HoldemCards v-else :update="update" :cards="player.comfirmCards"></HoldemCards>
       <b-tag v-if="player.isDie" type="is-danger"> 다이 </b-tag>
+      <b-tag v-if="gameState == 9 && player.sessionId" type="is-danger">
+        {{ printRank(player.cardRank) }}
+      </b-tag>
+      <b-tag v-if="gameState != 9 && me" type="is-danger"> {{ printRank(myRank) }} </b-tag>
     </div>
     <div class="player-box">
       <div class="buttons">
@@ -23,7 +30,7 @@
         <b-button @click="sendPlayMessage(1)" :disabled="buttonDisable(1)" type="is-success"
           >체크</b-button
         >
-        <b-button @click="sendPlayMessage(2)" :disabled="buttonDisable(2)" type="is-success"
+        <b-button @click="sendPlayMessage(2)" :disabled="buttonDisable(2)" type="is-info"
           >삥</b-button
         >
         <b-button @click="sendPlayMessage(3)" :disabled="buttonDisable(3)" type="is-info"
@@ -42,8 +49,8 @@
       <b-field grouped group-multiline>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">소지금</b-tag>
-            <b-tag type="is-info">{{ player.amount }}</b-tag>
+            <b-tag type="is-dark">판 배팅액</b-tag>
+            <b-tag type="is-info">{{ player.betAmount }}</b-tag>
           </b-taglist>
         </div>
         <div class="control">
@@ -54,8 +61,8 @@
         </div>
         <div class="control">
           <b-taglist attached>
-            <b-tag type="is-dark">판 배팅액</b-tag>
-            <b-tag type="is-info">{{ player.betAmount }}</b-tag>
+            <b-tag type="is-dark">소지금</b-tag>
+            <b-tag type="is-info">{{ player.amount }}</b-tag>
           </b-taglist>
         </div>
         <div class="control">
@@ -94,8 +101,14 @@ export default class Player extends Vue {
   @Prop(String)
   sessionId: string;
 
+  @Prop(Number)
+  myRank: number;
+
+  @Prop(Number)
+  gameState: number;
+
   printPlayState(): string {
-    switch (this.$props.player.playState) {
+    switch (this.player.playState) {
       case 0:
         return 'None';
       case 1:
@@ -108,6 +121,22 @@ export default class Player extends Vue {
         return 'Play';
     }
     return '';
+  }
+
+  printRank(rank: number): string {
+    const title = [
+      '하이카드',
+      '원페이',
+      '투페어',
+      '쓰리오브 카인드',
+      '스트레이트',
+      '플러쉬',
+      '풀하우스',
+      '포 오브어 카인드',
+      '스트레이트 플러쉬',
+      '로얄 플러쉬',
+    ];
+    return title[rank];
   }
 
   get me() {
