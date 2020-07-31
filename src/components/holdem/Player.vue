@@ -24,7 +24,6 @@
     </div>
     <div class="player-box">
       <div class="buttons">
-        <b-button @click="sendPlayMessage(7)" type="is-danger">나가기예약</b-button>
         <b-button @click="sendPlayMessage(0)" :disabled="buttonDisable(0)" type="is-primary"
           >다이</b-button
         >
@@ -46,6 +45,7 @@
         <b-button @click="sendPlayMessage(6)" :disabled="buttonDisable(6)" type="is-danger"
           >올인</b-button
         >
+        <b-button v-if="sessionId === player.sessionId" @click="sendPlayMessage(7)" type="is-danger">나가기예약</b-button>
       </div>
       <b-field grouped group-multiline>
         <div class="control">
