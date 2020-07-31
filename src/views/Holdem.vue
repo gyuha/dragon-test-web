@@ -49,6 +49,11 @@ import { HoldemTurnState } from '@/holdemSchema/HoldemTypes';
     Player,
     'json-view': JSONView,
   },
+  beforeRouteLeave(to, from, next) {
+    // @ts-ignore
+    this.room.leave();
+    next();
+  },
 })
 export default class Holdem extends Vue {
   client!: Colyseus.Client;
@@ -153,6 +158,12 @@ export default class Holdem extends Vue {
     this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
       this.messageType = 'play';
       this.onPlayMessage(message);
+    });
+
+    //! 게임에서 내보내 질때
+    this.room.onLeave((code) => {
+      this.$swal('나가요~');
+      this.$router.push('/');
     });
   }
 

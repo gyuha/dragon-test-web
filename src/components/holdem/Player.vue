@@ -24,6 +24,7 @@
     </div>
     <div class="player-box">
       <div class="buttons">
+        <b-button @click="sendPlayMessage(7)" type="is-danger">나가기예약</b-button>
         <b-button @click="sendPlayMessage(0)" :disabled="buttonDisable(0)" type="is-primary"
           >다이</b-button
         >
@@ -68,7 +69,7 @@
         <div class="control">
           <b-taglist attached>
             <b-tag type="is-dark">나가기</b-tag>
-            <b-tag type="is-info">{{ player.existReserve ? 'Yes' : 'No' }}</b-tag>
+            <b-tag type="is-info">{{ player.exitReserve ? 'Yes' : 'No' }}</b-tag>
           </b-taglist>
         </div>
       </b-field>
