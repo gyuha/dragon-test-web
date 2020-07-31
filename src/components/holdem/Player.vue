@@ -20,7 +20,7 @@
       <b-tag v-if="gameState == 9 && player.sessionId" type="is-danger">
         {{ printRank(player.cardRank) }}
       </b-tag>
-      <b-tag v-if="gameState != 9 && me" type="is-danger"> {{ printRank(myRank) }} </b-tag>
+      <b-tag v-if="gameState != 9 && me" type="is-info"> {{ printRank(myRank) }} </b-tag>
     </div>
     <div class="player-box">
       <div class="buttons">

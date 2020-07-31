@@ -8,8 +8,8 @@
     "build": "vue-cli-service build",
     "predeploy:test": "vue-cli-service build --mode test",
     "predeploy:demo": "vue-cli-service build --mode demo",
-    "deploy:test": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/matgo/client/",
-    "deploy:demo": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/matgo-demo/client/",
+    "deploy:test": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/dragon/matgo/client/",
+    "deploy:demo": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/dragon/matgo-demo/client/",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

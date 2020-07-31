@@ -159,10 +159,18 @@ export default class Holdem extends Vue {
   onPlayMessage(message: ResponseMessage) {
     switch (message.command) {
       case ResponseMessageCommand.take:
-        this.myCards = message.cards;
+        this.myCards = message.cards as string[];
+        if (message.value) {
+          this.myRank = message.value[0];
+        }
         break;
       case ResponseMessageCommand.result:
-        this.myRank = message.value[0];
+        if (message.value) {
+          this.myRank = message.value[0];
+        }
+        break;
+      case ResponseMessageCommand.play:
+        this.toast(String(message.playCommand));
         break;
     }
   }
@@ -176,6 +184,15 @@ export default class Holdem extends Vue {
   playMessage(message: RequestMessage) {
     console.log(message);
     this.sendMessage(MessageType.play, message);
+  }
+
+  toast(message: string, type = 'is-warning') {
+    this.$buefy.snackbar.open({
+      duration: 500,
+      message: message,
+      type,
+      position: 'is-bottom',
+    });
   }
 }
 </script>
