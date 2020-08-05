@@ -1,5 +1,6 @@
 <template>
   <div class="lobby">
+    {{ user }}
     <h1>무명 맞고</h1>
     <b-carousel-list v-model="page" :data="matgoRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
@@ -46,8 +47,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import Axios from 'axios';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 interface MatgoRooms {
   id: string;
@@ -74,18 +74,36 @@ interface HoldemRooms {
   components: {},
 })
 export default class Lobby extends Vue {
+  @Prop()
+  token: string;
+
   matgoRooms: MatgoRooms[] = [];
   holdemRooms: HoldemRooms[] = [];
   page = 0;
+
   mounted() {
     this.matgoLobby();
     this.holdemLobby();
+    this.userInfo();
+  }
+
+  user = {};
+
+  async userInfo() {
+    const url = `//${process.env.VUE_APP_DRAGON_SERVER_HOST}/api/user/info/${this.token}`;
+    console.log("Lobby -> userInfo -> url", url)
+    const res = await this.$http.get(url);
+    if (!res || res.data.result !== 0) {
+      this.$swal('auth error');
+      return;
+    }
+    this.user = res.data.data;
   }
 
   async matgoLobby() {
     console.log(process.env.VUE_APP_MATGO_SERVER_HOST);
     const url = `//${process.env.VUE_APP_MATGO_SERVER_HOST}/api/matgo/rooms`;
-    const res = await Axios.get(url);
+    const res = await this.$http.get(url);
     console.log(res);
     this.matgoRooms = [];
     for (const key in res.data) {
@@ -97,7 +115,7 @@ export default class Lobby extends Vue {
 
   async holdemLobby() {
     const url = `//${process.env.VUE_APP_HOLDEM_SERVER_HOST}/api/holdem/rooms`;
-    const res = await Axios.get(url);
+    const res = await this.$http.get(url);
     console.log(res);
     this.holdemRooms = [];
     for (const key in res.data) {

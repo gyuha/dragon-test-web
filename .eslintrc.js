@@ -21,11 +21,6 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/interface-name-prefix": [
-      "error",
-      {
-          "prefixWithI": "always"
-      }
-    ]
+    "@typescript-eslint/interface-name-prefix": "off" 
   }
 };
