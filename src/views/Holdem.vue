@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ id }}
     <HoldemState :value="gameState"></HoldemState>
     <div class="card">
       <h1>Community Cards</h1>
@@ -25,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import HoldemState from '@/components/holdem/HoldemState.vue';
 import HoldemCards from '@/components/holdem/HoldemCards.vue';
 import Player from '@/components/holdem/Player.vue';
@@ -40,9 +41,7 @@ import { RequestMessage } from '@/holdemSchema/RequestMessage';
 import { HoldemTurnState } from '@/holdemSchema/HoldemTypes';
 
 @Component({
-  props: {
-    id: String,
-  },
+  props: {},
   components: {
     HoldemState,
     HoldemCards,
@@ -56,6 +55,12 @@ import { HoldemTurnState } from '@/holdemSchema/HoldemTypes';
   },
 })
 export default class Holdem extends Vue {
+  @Prop()
+  id: string;
+
+  @Prop()
+  token: string;
+
   client!: Colyseus.Client;
   room: Colyseus.Room | null = null;
   messageType = '';
@@ -91,7 +96,7 @@ export default class Holdem extends Vue {
 
   async roomInfoLoad() {
     const host = `//${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
-    const res = await Axios.get(`${host}/api/holdem/room/${this.$props.id}`);
+    const res = await Axios.get(`${host}/api/holdem/room/${this.id}`);
     this.roomInfo = res.data;
   }
 
@@ -133,7 +138,7 @@ export default class Holdem extends Vue {
     const host = `ws://${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
     this.client = new Colyseus.Client(host);
     this.client
-      .joinOrCreate(this.$props.id)
+      .joinOrCreate(this.id)
       .then((room: Colyseus.Room) => {
         this.room = room;
         this.eventRegister();
@@ -162,8 +167,8 @@ export default class Holdem extends Vue {
 
     //! 게임에서 내보내 질때
     this.room.onLeave((code) => {
-      this.$swal('나가요~');
-      this.$router.push('/');
+      // this.$swal('나가요~');
+      this.$router.push('/lobby/' + this.token);
     });
   }
 

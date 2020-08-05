@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import * as Colyseus from 'colyseus.js';
 // @ts-ignore
 import { JSONView } from 'vue-json-component';
@@ -133,9 +133,7 @@ import PlayerStatus from '@/components/matgo/PlayerStatus.vue';
 import Axios from 'axios';
 
 @Component({
-  props: {
-    id: String,
-  },
+  props: {},
   components: {
     GameState,
     MatgoCards,
@@ -145,6 +143,12 @@ import Axios from 'axios';
   },
 })
 export default class Matgo extends Vue {
+  @Prop()
+  id: string;
+
+  @Prop()
+  token: string;
+
   client!: Colyseus.Client;
   room: Colyseus.Room | null = null;
   messageType = '';

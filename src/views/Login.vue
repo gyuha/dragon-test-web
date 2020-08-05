@@ -68,7 +68,6 @@ export default class Login extends Vue {
   };
 
   async login() {
-    this.$swal(process.env.VUE_APP_DRAGON_SERVER_HOST);
     const url = `//${process.env.VUE_APP_DRAGON_SERVER_HOST}/api/auth/login`;
     const res = await this.$http({
       url,

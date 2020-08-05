@@ -20,13 +20,13 @@ const routes: Array<RouteConfig> = [
     props: true,
   },
   {
-    path: '/matgo/:id',
+    path: '/matgo/:id/:token',
     name: 'matgo',
     component: Matgo,
     props: true,
   },
   {
-    path: '/holdem/:id',
+    path: '/holdem/:id/:token',
     name: 'holdem',
     component: Holdem,
     props: true,

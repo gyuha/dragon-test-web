@@ -4,11 +4,13 @@
     <h1>무명 맞고</h1>
     <b-carousel-list v-model="page" :data="matgoRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
-        <router-link :to="'/matgo/' + props.list.id">
+        <router-link :to="'/matgo/' + props.list.id + '/' + token">
           <div class="thecard">
+            <!--
             <div class="card-img">
               <img :src="'/img/cards/' + props.list.icon + '.png'" />
             </div>
+            -->
             <div class="card-caption">
               <span class="date"> {{ props.list.name }} / {{ props.list.grade }}</span>
               <h2>점 {{ props.list.point }}</h2>
@@ -25,11 +27,13 @@
     <h1>텍사스 홀덤</h1>
     <b-carousel-list v-model="page" :data="holdemRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
-        <router-link :to="'/holdem/' + props.list.id">
+        <router-link :to="'/holdem/' + props.list.id + '/' + token">
           <div class="thecard">
+            <!--
             <div class="card-img">
               <img :src="'/img/pokers/' + props.list.icon + '.png'" />
             </div>
+            -->
             <div class="card-caption">
               <span class="date"> {{ props.list.name }} / {{ props.list.grade }}</span>
               <h2>점 {{ props.list.point }}</h2>
@@ -91,7 +95,6 @@ export default class Lobby extends Vue {
 
   async userInfo() {
     const url = `//${process.env.VUE_APP_DRAGON_SERVER_HOST}/api/user/info/${this.token}`;
-    console.log("Lobby -> userInfo -> url", url)
     const res = await this.$http.get(url);
     if (!res || res.data.result !== 0) {
       this.$swal('auth error');
