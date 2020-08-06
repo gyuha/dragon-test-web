@@ -138,13 +138,15 @@ export default class Holdem extends Vue {
     const host = `ws://${process.env.VUE_APP_HOLDEM_SERVER_HOST}`;
     this.client = new Colyseus.Client(host);
     this.client
-      .joinOrCreate(this.id)
+      .joinOrCreate(this.id, {
+        token: this.token,
+      })
       .then((room: Colyseus.Room) => {
         this.room = room;
         this.eventRegister();
       })
       .catch((e: unknown) => {
-        console.log('JOIN ERROR', e);
+        console.error('JOIN ERROR', e);
       });
   }
 
@@ -163,6 +165,11 @@ export default class Holdem extends Vue {
     this.room.onMessage(MessageType.play, (message: ResponseMessage) => {
       this.messageType = 'play';
       this.onPlayMessage(message);
+    });
+
+    this.room.onMessage(MessageType.error, (message: ResponseMessage) => {
+      this.messageType = 'error';
+      this.$router.push('/lobby/' + this.token);
     });
 
     //! 게임에서 내보내 질때

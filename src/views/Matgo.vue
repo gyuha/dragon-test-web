@@ -194,7 +194,7 @@ export default class Matgo extends Vue {
 
   async roomInfoLoad() {
     const host = `//${process.env.VUE_APP_MATGO_SERVER_HOST}`;
-    const res = await Axios.get(`${host}/api/matgo/room/${this.$props.id}`);
+    const res = await Axios.get(`${host}/api/matgo/room/${this.id}`);
     this.roomInfo = res.data;
   }
 
@@ -257,7 +257,9 @@ export default class Matgo extends Vue {
     console.log(host);
     this.client = new Colyseus.Client(host);
     this.client
-      .joinOrCreate(this.$props.id)
+      .joinOrCreate(this.id, {
+        token: this.token,
+      })
       .then((room: Colyseus.Room) => {
         console.log(room);
         this.room = room;
