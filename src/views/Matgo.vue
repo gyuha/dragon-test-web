@@ -8,7 +8,11 @@
     ></MatgoCards>
     <div v-if="gameState === 'play' || gameState === 'end'">
       <div class="player-card-group" :class="[oppsiteBg()]">
-        <h1>상대 카드({{ opposite.handCardCount }})</h1>
+        <h1>
+          <img :src="opposite.avatar" style="width: 25px; border-radius: 12px;" />
+          {{ opposite.name }} / {{ opposite.userId }} ({{ opposite.handCardCount }})
+          <b>금액: {{ opposite.amount }}</b>
+        </h1>
         <MatgoCards :cards="oppositeHandCards"></MatgoCards>
 
         <h1>상대가 먹은 카드 ({{ opposite.floorCards.length }})</h1>
@@ -44,7 +48,11 @@
         <h1>먹은 카드 ({{ my.floorCards.length }})</h1>
         <MatgoCards :cards="my.floorCards"></MatgoCards>
 
-        <h1>내 카드 ({{ myHandCards.length }})</h1>
+        <h1>
+          <img :src="my.avatar" style="width: 25px; border-radius: 12px;" />
+          {{ my.name }} / {{ my.userId }} ({{ myHandCards.length }})
+          <b>금액: {{ my.amount }}</b>
+        </h1>
         <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
         <PlayerStatus :status="myStatus"></PlayerStatus>
         <h1 />
