@@ -457,6 +457,9 @@ export default class Matgo extends Vue {
         this.playCards = message.playCards as [];
         this.selectKookjin();
         break;
+      case ResponseMessageCommand.end:
+        this.$swal('완료', JSON.stringify(message.result), 'success');
+        break;
     }
     if (
       message.command !== ResponseMessageCommand.handCards &&

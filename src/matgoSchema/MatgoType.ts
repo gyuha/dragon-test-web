@@ -43,5 +43,6 @@ export enum ResponseMessageCommand {
   "shake" = 60, //! 국진
   "startReady" = 70, //! 시작 완료
   "turnEnd" = 80, //! 턴 끝내기
+  "end" = 90, //! 게임 결과
   "error" = 100 //! 결과 종류
 }
