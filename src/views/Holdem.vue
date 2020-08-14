@@ -168,12 +168,14 @@ export default class Holdem extends Vue {
     });
 
     this.room.onMessage(MessageType.error, (message: ResponseMessage) => {
+      console.log(message);
       this.messageType = 'error';
       this.$router.push('/lobby/' + this.token);
     });
 
     //! 게임에서 내보내 질때
     this.room.onLeave((code) => {
+      console.log(code);
       // this.$swal('나가요~');
       this.$router.push('/lobby/' + this.token);
     });
@@ -194,6 +196,9 @@ export default class Holdem extends Vue {
         break;
       case ResponseMessageCommand.play:
         this.toast(String(message.playCommand));
+        break;
+      case ResponseMessageCommand.end:
+        this.$swal('END', JSON.stringify(message.results));
         break;
     }
   }
