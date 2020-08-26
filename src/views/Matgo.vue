@@ -9,7 +9,10 @@
     <div v-if="gameState === 'play' || gameState === 'end'">
       <div class="player-card-group" :class="[oppsiteBg()]">
         <h1>
-          <img :src="opposite.avatar" style="width: 25px; border-radius: 12px;" />
+          <img
+            :src="`/img/avatar/${opposite.avatar}.png`"
+            style="width: 25px; border-radius: 12px;"
+          />
           {{ opposite.name }} / {{ opposite.userId }} ({{ opposite.handCardCount }})
           <b>금액: {{ opposite.amount }}</b>
         </h1>
@@ -49,7 +52,7 @@
         <MatgoCards :cards="my.floorCards"></MatgoCards>
 
         <h1>
-          <img :src="my.avatar" style="width: 25px; border-radius: 12px;" />
+          <img :src="`/img/avatar/${my.avatar}.png`" style="width: 25px; border-radius: 12px;" />
           {{ my.name }} / {{ my.userId }} ({{ myHandCards.length }})
           <b>금액: {{ my.amount }}</b>
         </h1>
