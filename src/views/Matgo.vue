@@ -328,6 +328,11 @@ export default class Matgo extends Vue {
       this.onPlayMessage(message);
     });
 
+    //! 잭팟
+    this.room.onMessage(MessageType.jackpot, (message: ResponseMessage) => {
+      this.$swal(message.message, JSON.stringify(message), 'success');
+    });
+
     //! 게임에서 내보내 질때
     this.room.onLeave((code) => {
       console.log('Home -> eventRegister -> code', code);

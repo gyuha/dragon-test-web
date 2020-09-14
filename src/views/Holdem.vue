@@ -120,7 +120,7 @@ export default class Holdem extends Vue {
       const player: any = this.stateData.players[i];
       if (player.sessionId === this.sessionId) {
         if (player.amount === 0) {
-          this.$swal('END');
+          // this.$swal('END');
           this.beforeDestory();
           setTimeout(() => {
             this.$router.push('/');
@@ -173,6 +173,10 @@ export default class Holdem extends Vue {
       this.$router.push('/lobby/' + this.token);
     });
 
+    this.room.onMessage(MessageType.jackpot, (message: ResponseMessage) => {
+      this.toast(String(JSON.stringify(message)), undefined, 10000);
+    });
+
     //! 게임에서 내보내 질때
     this.room.onLeave((code) => {
       console.log(code);
@@ -214,9 +218,9 @@ export default class Holdem extends Vue {
     this.sendMessage(MessageType.play, message);
   }
 
-  toast(message: string, type = 'is-warning') {
+  toast(message: string, type = 'is-warning', duration = 1000) {
     this.$buefy.snackbar.open({
-      duration: 500,
+      duration,
       message: message,
       type,
       position: 'is-bottom',

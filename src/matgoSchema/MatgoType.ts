@@ -3,6 +3,7 @@ export enum MessageType {
   'firstPick' = 10,
   'play' = 20,
   'end' = 30,
+  'jackpot' = 40,
   'error' = 100,
 }
 
