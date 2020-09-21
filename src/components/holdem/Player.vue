@@ -70,6 +70,12 @@
         </div>
         <div class="control">
           <b-taglist attached>
+            <b-tag type="is-dark">레벨</b-tag>
+            <b-tag type="is-info">{{ player.level }}</b-tag>
+          </b-taglist>
+        </div>
+        <div class="control">
+          <b-taglist attached>
             <b-tag type="is-dark">나가기</b-tag>
             <b-tag type="is-info">{{ player.exitReserve ? 'Yes' : 'No' }}</b-tag>
           </b-taglist>

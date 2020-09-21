@@ -55,6 +55,8 @@
           <img :src="`/img/avatar/${my.avatar}.png`" style="width: 25px; border-radius: 12px;" />
           {{ my.name }} / {{ my.userId }} ({{ myHandCards.length }})
           <b>금액: {{ my.amount }}</b>
+          /
+          <b>레벨: {{ my.level }}</b>
         </h1>
         <MatgoCards @select="handCardClick" :cards="myHandCards"></MatgoCards>
         <PlayerStatus :status="myStatus"></PlayerStatus>
@@ -279,6 +281,7 @@ export default class Matgo extends Vue {
       })
       .catch((e: unknown) => {
         console.log('JOIN ERROR', e);
+        this.$swal({ title: 'Error', text: JSON.stringify(e) });
       });
   }
 

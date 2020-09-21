@@ -147,6 +147,7 @@ export default class Holdem extends Vue {
       })
       .catch((e: unknown) => {
         console.error('JOIN ERROR', e);
+        this.$swal({ title: 'Error', text: JSON.stringify(e) });
       });
   }
 
@@ -202,7 +203,7 @@ export default class Holdem extends Vue {
         this.toast(String(message.playCommand));
         break;
       case ResponseMessageCommand.end:
-        this.$swal('END', JSON.stringify(message.results));
+        this.$swal({ title: 'Game over', text: JSON.stringify(message.results), timer: 2000 });
         break;
     }
   }
