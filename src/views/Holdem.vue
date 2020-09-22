@@ -39,6 +39,8 @@ import { ResponseMessage } from '@/holdemSchema/ResponseMessage';
 import { ResponseMessageCommand } from '@/holdemSchema/ResponseMessageCommand';
 import { RequestMessage } from '@/holdemSchema/RequestMessage';
 import { HoldemTurnState } from '@/holdemSchema/HoldemTypes';
+import { jsonHighlight } from '../libs/jsonHighlight';
+import '@/libs/pre.css';
 
 @Component({
   props: {},
@@ -145,9 +147,11 @@ export default class Holdem extends Vue {
         this.room = room;
         this.eventRegister();
       })
-      .catch((e: unknown) => {
-        console.error('JOIN ERROR', e);
-        this.$swal({ title: 'Error', text: JSON.stringify(e) });
+      .catch(async (e: unknown) => {
+        await this.$swal({ title: 'Error', html: jsonHighlight(e) });
+        // this.$router.push('/lobby/' + this.token);
+        location.href = '/lobby/' + this.token;
+        // location.reload();
       });
   }
 
