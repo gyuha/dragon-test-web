@@ -8,9 +8,10 @@
         :class="{ 'avatar-enable': sessionId === player.sessionId }"
       />
       <b-tag v-if="player.playState == 1" type="is-normal"> {{ printPlayState() }} </b-tag>
-      <b-tag v-if="player.playState == 2" type="is-danger"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 2" type="is-warning"> {{ printPlayState() }} </b-tag>
       <b-tag v-if="player.playState == 3" type="is-danger"> {{ printPlayState() }} </b-tag>
-      <b-tag v-if="player.playState == 4" type="is-info"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 4" type="is-danger"> {{ printPlayState() }} </b-tag>
+      <b-tag v-if="player.playState == 5" type="is-info"> {{ printPlayState() }} </b-tag>
       {{ player.name }}
     </div>
     <div class="player-box">
@@ -123,10 +124,12 @@ export default class Player extends Vue {
       case 1:
         return 'Ready';
       case 2:
-        return 'S.B';
+        return 'DEALER';
       case 3:
-        return 'B.B';
+        return 'S.B';
       case 4:
+        return 'B.B';
+      case 5:
         return 'Play';
     }
     return '';

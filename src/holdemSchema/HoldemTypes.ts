@@ -52,6 +52,7 @@ export enum HoldemTurnState {
 
 export enum PositionState {
   READY = 0,
+  DEALER,
   SMALL_BLINDER,
   BIG_BLINDER,
   PLAYER,
