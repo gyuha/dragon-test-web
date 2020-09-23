@@ -78,6 +78,8 @@ export default class Holdem extends Vue {
   players = [];
   updateDt = 0;
 
+  commandText = ['다이', '체크', '삥', '콜', '따당', '하프', '올인', '나가기 예약'];
+
   constructor() {
     super();
   }
@@ -112,6 +114,16 @@ export default class Holdem extends Vue {
 
   get gameState() {
     return this.stateData.turnState;
+  }
+
+  sessionPlayer(sessionId: string) {
+    for (let i = 0; i < this.players.length; i++) {
+      const player = this.players[i] as any;
+      if (player.sessionId === sessionId) {
+        return this.players[i];
+      }
+    }
+    return null;
   }
 
   gameEnd() {
@@ -204,7 +216,22 @@ export default class Holdem extends Vue {
         }
         break;
       case ResponseMessageCommand.play:
-        this.toast(String(message.playCommand));
+        console.warn(message);
+        if (message.sessionId) {
+          console.log(this.sessionPlayer(message.sessionId));
+          const player = this.sessionPlayer(message.sessionId) as any;
+          if (!player) {
+            return;
+          }
+          this.$swal({
+            title:
+              String(message.playCommand) + '.' + this.commandText[Number(message.playCommand)],
+            text: player.name,
+            timer: 1000,
+          });
+        }
+        // this.toast(String(message.playCommand));
+        // this.$swal({ title: 'Game over', text: JSON.stringify(message.results), timer: 2000 });
         break;
       case ResponseMessageCommand.end:
         this.$swal({ title: 'Game over', text: JSON.stringify(message.results), timer: 2000 });
