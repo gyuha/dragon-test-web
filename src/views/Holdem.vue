@@ -226,8 +226,9 @@ export default class Holdem extends Vue {
           this.$swal({
             title:
               String(message.playCommand) + '.' + this.commandText[Number(message.playCommand)],
-            text: player.name,
+            html: `<img src="/img/avatar/${player.avatar}.png" width="110"/> <h1 style="font-size: 30px">${player.name}</h1>`,
             timer: 1000,
+            showConfirmButton: false,
           });
         }
         // this.toast(String(message.playCommand));
