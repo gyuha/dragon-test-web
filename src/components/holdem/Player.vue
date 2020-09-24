@@ -25,28 +25,28 @@
     </div>
     <div class="player-box">
       <div class="buttons">
-        <b-button @click="sendPlayMessage(0)" :disabled="buttonDisable(0)" type="is-primary"
+        <b-button @click="sendPlayMessage(1)" :disabled="buttonDisable(1)" type="is-primary"
           >다이</b-button
         >
-        <b-button @click="sendPlayMessage(1)" :disabled="buttonDisable(1)" type="is-success"
+        <b-button @click="sendPlayMessage(2)" :disabled="buttonDisable(2)" type="is-success"
           >체크</b-button
         >
-        <b-button @click="sendPlayMessage(2)" :disabled="buttonDisable(2)" type="is-info"
+        <b-button @click="sendPlayMessage(3)" :disabled="buttonDisable(3)" type="is-info"
           >삥</b-button
         >
-        <b-button @click="sendPlayMessage(3)" :disabled="buttonDisable(3)" type="is-info"
+        <b-button @click="sendPlayMessage(4)" :disabled="buttonDisable(4)" type="is-info"
           >콜</b-button
         >
-        <b-button @click="sendPlayMessage(4)" :disabled="buttonDisable(4)" type="is-info"
+        <b-button @click="sendPlayMessage(5)" :disabled="buttonDisable(5)" type="is-info"
           >따당</b-button
         >
-        <b-button @click="sendPlayMessage(5)" :disabled="buttonDisable(5)" type="is-warning"
+        <b-button @click="sendPlayMessage(6)" :disabled="buttonDisable(6)" type="is-warning"
           >하프</b-button
         >
-        <b-button @click="sendPlayMessage(6)" :disabled="buttonDisable(6)" type="is-danger"
+        <b-button @click="sendPlayMessage(7)" :disabled="buttonDisable(7)" type="is-danger"
           >올인</b-button
         >
-        <b-button v-if="sessionId === player.sessionId" @click="sendPlayMessage(7)" type="is-danger"
+        <b-button v-if="sessionId === player.sessionId" @click="sendPlayMessage(8)" type="is-danger"
           >나가기예약</b-button
         >
       </div>

@@ -78,7 +78,7 @@ export default class Holdem extends Vue {
   players = [];
   updateDt = 0;
 
-  commandText = ['다이', '체크', '삥', '콜', '따당', '하프', '올인', '나가기 예약'];
+  commandText = ['none', '다이', '체크', '삥', '콜', '따당', '하프', '올인', '나가기 예약'];
 
   constructor() {
     super();
