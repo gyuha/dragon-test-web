@@ -443,6 +443,16 @@ export default class Matgo extends Vue {
   }
 
   onPlayMessage(message: ResponseMessage) {
+    // 모달을 닫아 주자
+    if (
+      message.command === ResponseMessageCommand.take ||
+      message.command === ResponseMessageCommand.end
+    ) {
+      // @ts-ignore
+      this.$swal.close();
+      this.isSelectModalActive = false;
+    }
+
     switch (message.command) {
       case ResponseMessageCommand.handCards:
         this.playStated = false;
