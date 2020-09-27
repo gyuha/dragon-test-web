@@ -70,6 +70,12 @@
         <b-field grouped group-multiline>
           <div class="control">
             <b-taglist attached>
+              <b-tag type="is-dark">Auto Waiting</b-tag>
+              <b-tag type="is-info">{{ autoWaiting }}</b-tag>
+            </b-taglist>
+          </div>
+          <div class="control">
+            <b-taglist attached>
               <b-tag type="is-dark">Room ID</b-tag>
               <b-tag type="is-info">{{ roomId }}</b-tag>
             </b-taglist>
@@ -176,6 +182,8 @@ export default class Matgo extends Vue {
   opposite: Player = new Player();
   myStatus: any;
   oppositeStatus: any;
+
+  autoWaiting = 0;
 
   myHandCards = [];
 
@@ -294,6 +302,7 @@ export default class Matgo extends Vue {
       if (this.gameState === 'play') {
         this.playCardsDisplay(state);
       }
+      this.autoWaiting = state.autoWaiting;
       this.$forceUpdate();
     });
 
@@ -505,6 +514,7 @@ export default class Matgo extends Vue {
     switch (message.turn) {
       case TurnCommand.complete: //! 턴이 완료 이면 다음턴으로 보낸다.
         if (message.sessionId !== this.sessionId) return;
+        console.log('Matgo -> turnCommand -> TurnCommand.complete', TurnCommand.complete);
         this.sendMessage(MessageType.play, {
           command: RequestMessageCommand.turnEnd,
         } as RequestMessage);
