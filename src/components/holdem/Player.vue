@@ -32,19 +32,19 @@
           >체크</b-button
         >
         <b-button @click="sendPlayMessage(3)" :disabled="buttonDisable(3)" type="is-info"
-          >삥</b-button
+          >삥{{ buttonAmount(3) }}</b-button
         >
         <b-button @click="sendPlayMessage(4)" :disabled="buttonDisable(4)" type="is-info"
-          >콜</b-button
+          >콜{{ buttonAmount(4) }}</b-button
         >
         <b-button @click="sendPlayMessage(5)" :disabled="buttonDisable(5)" type="is-info"
-          >따당</b-button
+          >따당{{ buttonAmount(5) }}</b-button
         >
         <b-button @click="sendPlayMessage(6)" :disabled="buttonDisable(6)" type="is-warning"
-          >하프</b-button
+          >하프{{ buttonAmount(6) }}</b-button
         >
         <b-button @click="sendPlayMessage(7)" :disabled="buttonDisable(7)" type="is-danger"
-          >올인</b-button
+          >올인{{ buttonAmount(7) }}</b-button
         >
         <b-button v-if="sessionId === player.sessionId" @click="sendPlayMessage(8)" type="is-danger"
           >나가기예약</b-button
@@ -89,6 +89,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import HoldemCards from './HoldemCards.vue';
+import { BetButtons } from '../../holdemSchema/HoldemTypes';
 
 @Component({
   components: {
@@ -167,7 +168,17 @@ export default class Player extends Vue {
     // if (this.sessionId === this.player.sessionId) {
     //   return true;
     // }
-    return !this.player.buttons[num];
+    return this.player.buttons[num] === 0;
+  }
+
+  buttonAmount(num: number): string {
+    if (!this.currentPlayer() || this.sessionId !== this.player.sessionId) {
+      return '';
+    }
+    if (this.player.buttons[num] === 0) {
+      return '';
+    }
+    return `(${this.player.buttons[num]})`;
   }
 
   currentPlayer() {

@@ -9,10 +9,13 @@
     "build": "vue-cli-service build",
     "build:test": "vue-cli-service build --mode test",
     "build:demo": "vue-cli-service build --mode demo",
+    "build:vn": "vue-cli-service build --mode vn",
     "upload:test": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/dragon/matgo/client/",
     "upload:demo": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/dragon-demo/web-test/",
+    "upload:vn": "rsync -avzh --delete ./dist/* playpot@catseven.cafe24.com:/opt/dragon-vn/web-test/",
     "deploy:test": "run-s clean build:test upload:test",
     "deploy:demo": "run-s clean build:demo upload:demo",
+    "deploy:vn": "run-s clean build:vn upload:vn",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

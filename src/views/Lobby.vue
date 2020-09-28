@@ -1,7 +1,7 @@
 <template>
   <div class="lobby">
     {{ user }}
-    <h1>무명 맞고</h1>
+    <h1>맞고</h1>
     <b-carousel-list v-model="page" :data="matgoRooms" :arrow-hover="false" :items-to-show="6">
       <template slot="item" slot-scope="props">
         <router-link :to="'/matgo/' + props.list.id + '/' + token">
